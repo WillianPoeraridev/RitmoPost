@@ -211,25 +211,26 @@ Core loop funcionando: gerar → ver → baixar PDF → pagar.
 - [x] Landing page com demo embutido sem login
 - [x] Deploy em produção (Vercel + Neon) — https://postaja-gold.vercel.app
 
-### Fase 1 — Primeiros 30 Dias
+### Fase 1 — Primeiros 30 Dias ✅ CONCLUÍDO
 
-- [ ] Mês selecionável (outubro, novembro...)
-- [ ] Datas comemorativas automáticas por mês
-- [ ] Regenerar dia específico individualmente
-- [ ] Link público de compartilhamento do calendário
-- [ ] Plano anual no Stripe (R$239/ano)
-- [ ] Email de boas-vindas via Resend
-- [ ] Watermark sutil no PDF: "Criado com PostaJá · postaja.com.br"
-- [ ] Botão "Copiar pra WhatsApp" (formata com emojis)
+- [x] Mês selecionável (atual + 2 próximos)
+- [x] Datas comemorativas automáticas por mês (injetadas no prompt)
+- [x] Regenerar dia específico individualmente
+- [x] Link público de compartilhamento do calendário (/c/[id])
+- [x] Email de boas-vindas via Resend
+- [x] Watermark sutil no PDF: "Criado com PostaJá · postaja.com.br"
+- [x] Botão "Copiar pra WhatsApp" (formatação bold/italic nativa)
+- [ ] Plano anual no Stripe (R$239/ano) — aguardando primeiros clientes
 
-### Fase 2 — 30 a 90 Dias
+### Fase 2 — 30 a 90 Dias ✅ CONCLUÍDO
 
-- [ ] Templates específicos por nicho (barbearia, salão, personal, lanchonete)
-- [ ] Upload de logo + personalização de cores no PDF
-- [ ] Roteiro de 30s para cada Reels do calendário
-- [ ] Modo agência: 1 conta, múltiplos negócios
-- [ ] Programa de referral (indique e ganhe 1 mês grátis)
-- [ ] Analytics de uso (PostHog)
+- [x] Templates específicos por nicho (10 nichos com contexto rico)
+- [x] Personalização de cor primária no PDF (6 cores, seletor no botão)
+- [x] Roteiro de 30s para cada Reels (gerado por IA, exibido no card)
+- [x] Modo agência: dashboard agrupado por negócio (?view=agencia)
+- [x] Analytics de uso (PostHog integrado no layout)
+- [ ] Upload de logo no PDF — requer storage (S3/R2), próxima fase
+- [ ] Programa de referral — requer base de usuários, próxima fase
 
 ### Fase 3 — 90 a 180 Dias
 
@@ -365,4 +366,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-12 — MVP no ar em produção*
+*Última atualização: 2026-06-12 — Fases 0, 1 e 2 concluídas. Produto no ar em produção.*
