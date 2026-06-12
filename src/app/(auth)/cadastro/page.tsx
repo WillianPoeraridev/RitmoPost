@@ -18,22 +18,27 @@ export default function CadastroPage() {
     setError("");
     setLoading(true);
 
-    const result = await signUp.email({ name, email, password });
+    try {
+      const result = await signUp.email({ name, email, password });
 
-    if (result.error) {
-      setError(result.error.message ?? "Erro ao criar conta. Tente novamente.");
+      if (result.error) {
+        setError(result.error.message ?? "Erro ao criar conta. Tente novamente.");
+        setLoading(false);
+        return;
+      }
+
+      fetch("/api/welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      }).catch(() => {});
+
+      router.push("/gerar");
+      router.refresh();
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
       setLoading(false);
-      return;
     }
-
-    fetch("/api/welcome", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    }).catch(() => {});
-
-    router.push("/gerar");
-    router.refresh();
   }
 
   return (
