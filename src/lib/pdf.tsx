@@ -119,13 +119,14 @@ type Props = {
   month: number;
   year: number;
   days: CalendarDay[];
+  primaryColor?: string;
 };
 
-export function CalendarPdf({ businessName, niche, month, year, days }: Props) {
+export function CalendarPdf({ businessName, niche, month, year, days, primaryColor = "#7c3aed" }: Props) {
   return (
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape">
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: primaryColor }]}>
           <View>
             <Text style={styles.title}>
               Calendario de Conteudo — {MONTH_NAMES[month]}/{year}
@@ -134,7 +135,7 @@ export function CalendarPdf({ businessName, niche, month, year, days }: Props) {
               {businessName} · {niche}
             </Text>
           </View>
-          <Text style={styles.badge}>PostaJa · postaja.com.br</Text>
+          <Text style={[styles.badge, { color: primaryColor }]}>PostaJa · postaja.com.br</Text>
         </View>
 
         <View style={styles.grid}>

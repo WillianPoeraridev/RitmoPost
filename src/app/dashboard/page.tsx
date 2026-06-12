@@ -13,15 +13,36 @@ const MONTH_NAMES = [
   "Jul", "Ago", "Set", "Out", "Nov", "Dez",
 ];
 
+type CalendarRow = {
+  id: string;
+  businessName: string;
+  niche: string;
+  month: number;
+  year: number;
+  content: unknown[];
+  createdAt: Date;
+};
+
+function groupByBusiness(calendars: CalendarRow[]) {
+  const map = new Map<string, CalendarRow[]>();
+  for (const cal of calendars) {
+    const key = cal.businessName;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(cal);
+  }
+  return map;
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ success?: string }>;
+  searchParams: Promise<{ success?: string; view?: string }>;
 }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/login");
 
   const params = await searchParams;
+  const agencyMode = params.view === "agencia";
 
   const [dbUser] = await db
     .select()
@@ -37,6 +58,7 @@ export default async function DashboardPage({
 
   const isPro = dbUser?.plan === "pro";
   const generationsUsed = dbUser?.generationsUsed ?? 0;
+  const grouped = groupByBusiness(calendars as CalendarRow[]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -71,20 +93,28 @@ export default async function DashboardPage({
                 : `${generationsUsed}/1 geração usada no plano grátis`}
             </p>
           </div>
-          <Link
-            href="/gerar"
-            className="bg-violet-600 hover:bg-violet-500 transition-colors px-5 py-2.5 rounded-xl font-medium text-sm"
-          >
-            + Novo calendário
-          </Link>
+          <div className="flex items-center gap-3">
+            {calendars.length > 0 && (
+              <Link
+                href={agencyMode ? "/dashboard" : "/dashboard?view=agencia"}
+                className="text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 px-3 py-2 rounded-lg transition-colors"
+              >
+                {agencyMode ? "Vista lista" : "Vista agência"}
+              </Link>
+            )}
+            <Link
+              href="/gerar"
+              className="bg-violet-600 hover:bg-violet-500 transition-colors px-5 py-2.5 rounded-xl font-medium text-sm"
+            >
+              + Novo calendário
+            </Link>
+          </div>
         </div>
 
         {!isPro && generationsUsed >= 1 && (
           <div className="bg-violet-900/20 border border-violet-700/50 rounded-xl p-5 mb-8 flex items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-violet-300">
-                Você usou sua geração grátis
-              </p>
+              <p className="font-semibold text-violet-300">Você usou sua geração grátis</p>
               <p className="text-sm text-slate-400 mt-1">
                 Assine o Pro para gerar calendários ilimitados por R$29,90/mês
               </p>
@@ -98,14 +128,49 @@ export default async function DashboardPage({
             <p className="text-5xl mb-4">📅</p>
             <p className="text-lg mb-2">Nenhum calendário ainda</p>
             <p className="text-sm mb-6">Gere seu primeiro e o mês de conteúdo estará pronto</p>
-            <Link
-              href="/gerar"
-              className="text-violet-400 hover:underline text-sm"
-            >
+            <Link href="/gerar" className="text-violet-400 hover:underline text-sm">
               Gerar meu primeiro calendário →
             </Link>
           </div>
+        ) : agencyMode ? (
+          // Vista agência — agrupado por negócio
+          <div className="space-y-6">
+            {Array.from(grouped.entries()).map(([businessName, cals]) => (
+              <div key={businessName} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold">{businessName}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{cals[0].niche} · {cals.length} calendário{cals.length > 1 ? "s" : ""}</p>
+                  </div>
+                  <Link
+                    href={`/gerar`}
+                    className="text-xs text-violet-400 hover:underline"
+                  >
+                    + Novo mês
+                  </Link>
+                </div>
+                <div className="divide-y divide-slate-800">
+                  {cals.map((cal) => (
+                    <Link
+                      key={cal.id}
+                      href={`/calendario/${cal.id}`}
+                      className="flex items-center justify-between px-5 py-3 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <p className="text-sm text-slate-300">
+                        {MONTH_NAMES[cal.month]}/{cal.year}
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-slate-500">{(cal.content as unknown[]).length} dias</span>
+                        <span className="text-slate-600 text-sm">Ver →</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
+          // Vista lista padrão
           <div className="grid gap-4">
             {calendars.map((cal) => (
               <Link

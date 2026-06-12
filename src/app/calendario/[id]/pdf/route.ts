@@ -9,8 +9,10 @@ import { headers } from "next/headers";
 import React from "react";
 import type { DocumentProps } from "@react-pdf/renderer";
 
+const VALID_COLORS = /^#[0-9a-fA-F]{6}$/;
+
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -19,6 +21,8 @@ export async function GET(
   }
 
   const { id } = await params;
+  const color = req.nextUrl.searchParams.get("color") ?? "#7c3aed";
+  const primaryColor = VALID_COLORS.test(color) ? color : "#7c3aed";
 
   const [cal] = await db
     .select()
@@ -36,6 +40,7 @@ export async function GET(
     month: cal.month,
     year: cal.year,
     days: cal.content,
+    primaryColor,
   }) as React.ReactElement<DocumentProps>;
 
   const buffer = await renderToBuffer(element);
