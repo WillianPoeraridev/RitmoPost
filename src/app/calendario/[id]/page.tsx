@@ -9,18 +9,13 @@ import type { CalendarDay } from "@/lib/schema";
 import { CopyButton } from "@/components/copy-button";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { ShareButton } from "@/components/share-button";
+import { DayCard } from "@/components/day-card";
 
 const MONTH_NAMES = [
   "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
 
-const TYPE_COLORS: Record<string, string> = {
-  Reels: "bg-violet-600",
-  Carrossel: "bg-sky-600",
-  Story: "bg-amber-500",
-  Feed: "bg-emerald-600",
-};
 
 export default async function CalendarioPage({
   params,
@@ -84,40 +79,20 @@ export default async function CalendarioPage({
 
         {/* Legenda */}
         <div className="flex flex-wrap gap-3 mb-6">
-          {Object.entries(TYPE_COLORS).map(([type, color]) => (
-            <span key={type} className={`text-xs font-medium px-2 py-1 rounded-full text-white ${color}`}>
-              {type}
-            </span>
-          ))}
+          {(["Reels", "Carrossel", "Story", "Feed"] as const).map((type) => {
+            const colors: Record<string, string> = { Reels: "bg-violet-600", Carrossel: "bg-sky-600", Story: "bg-amber-500", Feed: "bg-emerald-600" };
+            return (
+              <span key={type} className={`text-xs font-medium px-2 py-1 rounded-full text-white ${colors[type]}`}>
+                {type}
+              </span>
+            );
+          })}
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {days.map((day) => (
-            <div
-              key={day.day}
-              className="bg-slate-900 border border-slate-800 hover:border-violet-700/30 transition-colors rounded-xl p-3 group"
-            >
-              <p className="text-xs text-slate-600 mb-2 font-medium">Dia {day.day}</p>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[day.type] ?? "bg-slate-600"}`}>
-                {day.type}
-              </span>
-              <p className="text-sm font-medium text-slate-200 mt-2 leading-tight">
-                {day.theme}
-              </p>
-              <p className="text-xs text-slate-500 mt-1 italic leading-snug">
-                {day.hook}
-              </p>
-              {/* Legenda expandida ao hover */}
-              <div className="mt-2 hidden group-hover:block">
-                <p className="text-xs text-slate-400 leading-snug border-t border-slate-800 pt-2">
-                  {day.caption}
-                </p>
-                <p className="text-xs text-slate-600 mt-1 leading-snug">
-                  {day.hashtags.slice(0, 4).join(" ")}
-                </p>
-              </div>
-            </div>
+            <DayCard key={day.day} day={day} calendarId={id} />
           ))}
         </div>
 
