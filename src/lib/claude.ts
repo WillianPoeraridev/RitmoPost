@@ -55,6 +55,10 @@ function getNicheContext(niche: string): string {
 }
 
 async function callOpenRouter(prompt: string, maxTokens: number): Promise<string> {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error("OPENROUTER_API_KEY is not set");
+  }
+
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -68,10 +72,36 @@ async function callOpenRouter(prompt: string, maxTokens: number): Promise<string
     }),
   });
 
-  if (!res.ok) throw new Error(`OpenRouter error: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`OpenRouter HTTP ${res.status}: ${body.slice(0, 300)}`);
+  }
+
   const data = await res.json();
-  const text = (data.choices[0].message.content as string).trim();
+  const choice = data?.choices?.[0];
+  const content = choice?.message?.content;
+  if (typeof content !== "string") {
+    throw new Error(`OpenRouter returned no content: ${JSON.stringify(data).slice(0, 300)}`);
+  }
+  if (choice.finish_reason === "length") {
+    throw new Error("OpenRouter response truncated (hit max_tokens) — increase max_tokens");
+  }
+
+  const text = content.trim();
   return text.startsWith("```") ? text.replace(/```(?:json)?\n?/g, "").trim() : text;
+}
+
+// JSON.parse with a clear error message that includes a snippet of the raw text,
+// so failures (truncation, stray markdown) are diagnosable instead of opaque.
+function parseJsonOrThrow(text: string, context: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(
+      `Failed to parse ${context} JSON (${msg}). Length=${text.length}. Tail: ${text.slice(-200)}`
+    );
+  }
 }
 
 const calendarDaySchema = z.object({
@@ -110,8 +140,8 @@ Regras:
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
 {"day":${day},"type":"Reels","theme":"tema especifico","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}`;
 
-  const text = await callOpenRouter(prompt, 512);
-  return calendarDaySchema.parse(JSON.parse(text)) as CalendarDay;
+  const text = await callOpenRouter(prompt, 700);
+  return calendarDaySchema.parse(parseJsonOrThrow(text, "single day")) as CalendarDay;
 }
 
 export async function generateCalendar(
@@ -142,8 +172,8 @@ Regras obrigatorias:
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
 [{"day":1,"type":"Reels","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}]`;
 
-  const text = await callOpenRouter(prompt, 4096);
-  const parsed = JSON.parse(text);
+  const text = await callOpenRouter(prompt, 8000);
+  const parsed = parseJsonOrThrow(text, "calendar");
   return z.array(calendarDaySchema).parse(parsed) as CalendarDay[];
 }
 

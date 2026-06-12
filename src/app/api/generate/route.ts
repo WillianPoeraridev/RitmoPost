@@ -7,6 +7,9 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
 
+// Calendar generation can take ~30s; raise the function timeout above the default.
+export const maxDuration = 60;
+
 const bodySchema = z.object({
   niche: z.string().min(1).max(100),
   businessName: z.string().min(1).max(100),
@@ -45,26 +48,35 @@ export async function POST(req: NextRequest) {
   const month = parsed.data.month ?? now.getMonth() + 1;
   const year = parsed.data.year ?? now.getFullYear();
 
-  const days = await generateCalendar(niche, businessName, month, year);
+  try {
+    const days = await generateCalendar(niche, businessName, month, year);
 
-  const id = crypto.randomUUID();
-  await db.insert(calendar).values({
-    id,
-    userId: session.user.id,
-    niche,
-    businessName,
-    month,
-    year,
-    content: days,
-    createdAt: now,
-  });
+    const id = crypto.randomUUID();
+    await db.insert(calendar).values({
+      id,
+      userId: session.user.id,
+      niche,
+      businessName,
+      month,
+      year,
+      content: days,
+      createdAt: now,
+    });
 
-  if (dbUser.plan === "free") {
-    await db
-      .update(user)
-      .set({ generationsUsed: dbUser.generationsUsed + 1 })
-      .where(eq(user.id, session.user.id));
+    if (dbUser.plan === "free") {
+      await db
+        .update(user)
+        .set({ generationsUsed: dbUser.generationsUsed + 1 })
+        .where(eq(user.id, session.user.id));
+    }
+
+    return NextResponse.json({ id });
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    console.error("[generate] failed:", detail);
+    return NextResponse.json(
+      { error: "generation_failed", detail },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({ id });
 }
