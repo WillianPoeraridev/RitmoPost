@@ -22,14 +22,13 @@ export default function LoginForm() {
       const result = await signIn.email({ email, password });
 
       if (result.error) {
-        setError("Email ou senha incorretos.");
+        setError(result.error.message ?? "Email ou senha incorretos.");
         setLoading(false);
         return;
       }
 
       const callbackUrl = params.get("callbackUrl") ?? "/dashboard";
       router.push(callbackUrl);
-      router.refresh();
     } catch {
       setError("Erro de conexão. Tente novamente.");
       setLoading(false);
