@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 const protectedPaths = ["/dashboard", "/gerar", "/calendario"];
-const SESSION_COOKIE = "better-auth.session_token";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -9,8 +9,10 @@ export function proxy(request: NextRequest) {
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
   if (!isProtected) return NextResponse.next();
 
-  const session = request.cookies.get(SESSION_COOKIE);
-  if (!session) {
+  // getSessionCookie checks both the secure-prefixed (`__Secure-...` in prod/https)
+  // and the plain cookie name (local/http), so this works in every environment.
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
     const url = new URL("/login", request.url);
     url.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(url);
