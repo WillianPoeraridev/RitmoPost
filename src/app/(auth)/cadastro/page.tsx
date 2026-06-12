@@ -25,6 +25,12 @@ export default function CadastroPage() {
       return;
     }
 
+    fetch("/api/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    }).catch(() => {});
+
     router.push("/gerar");
     router.refresh();
   }

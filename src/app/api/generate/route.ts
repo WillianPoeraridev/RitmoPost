@@ -10,6 +10,8 @@ import { z } from "zod";
 const bodySchema = z.object({
   niche: z.string().min(1).max(100),
   businessName: z.string().min(1).max(100),
+  month: z.number().int().min(1).max(12).optional(),
+  year: z.number().int().min(2024).max(2030).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -40,8 +42,8 @@ export async function POST(req: NextRequest) {
   }
 
   const now = new Date();
-  const month = now.getMonth() + 1;
-  const year = now.getFullYear();
+  const month = parsed.data.month ?? now.getMonth() + 1;
+  const year = parsed.data.year ?? now.getFullYear();
 
   const days = await generateCalendar(niche, businessName, month, year);
 

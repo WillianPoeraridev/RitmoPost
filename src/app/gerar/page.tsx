@@ -8,10 +8,27 @@ const NICHO_SUGGESTIONS = [
   "Lanchonete", "Pizzaria", "Açaí", "Fotografia", "Pet Shop", "Clínica",
 ];
 
+const MONTH_NAMES = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
+
+function getMonthOptions() {
+  const now = new Date();
+  const options = [];
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    options.push({ month: d.getMonth() + 1, year: d.getFullYear() });
+  }
+  return options;
+}
+
 export default function GerarPage() {
   const router = useRouter();
+  const monthOptions = getMonthOptions();
   const [niche, setNiche] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,11 +40,15 @@ export default function GerarPage() {
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ niche, businessName }),
+      body: JSON.stringify({
+        niche,
+        businessName,
+        month: selectedMonth.month,
+        year: selectedMonth.year,
+      }),
     });
 
     if (res.status === 402) {
-      // Paywall — redireciona para checkout
       const checkoutRes = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,6 +137,28 @@ export default function GerarPage() {
               />
             </div>
 
+            <div>
+              <label className="block text-sm text-slate-400 mb-1">
+                Mês do calendário
+              </label>
+              <div className="flex gap-2">
+                {monthOptions.map((opt) => (
+                  <button
+                    key={`${opt.month}-${opt.year}`}
+                    type="button"
+                    onClick={() => setSelectedMonth(opt)}
+                    className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                      selectedMonth.month === opt.month && selectedMonth.year === opt.year
+                        ? "bg-violet-600 border-violet-500 text-white"
+                        : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
+                    }`}
+                  >
+                    {MONTH_NAMES[opt.month - 1]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={loading || !niche || !businessName}
@@ -130,7 +173,7 @@ export default function GerarPage() {
                   A IA está criando seu calendário...
                 </span>
               ) : (
-                "Gerar Calendário Grátis →"
+                "Gerar Calendário →"
               )}
             </button>
 

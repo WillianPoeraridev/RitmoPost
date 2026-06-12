@@ -34,6 +34,23 @@ export async function generateCalendar(
 ): Promise<CalendarDay[]> {
   const monthName = MONTH_NAMES[month];
 
+  const HOLIDAYS: Record<number, string[]> = {
+    1: ["01/01 Ano Novo", "25/01 Aniversário de SP"],
+    2: ["Carnaval (datas variam)", "14/02 Dia dos Namorados em alguns países"],
+    3: ["08/03 Dia da Mulher", "19/03 Dia de São José"],
+    4: ["21/04 Tiradentes", "22/04 Descobrimento do Brasil"],
+    5: ["01/05 Dia do Trabalho", "Dia das Mães (2º domingo)"],
+    6: ["12/06 Dia dos Namorados", "Festa Junina (mês todo)"],
+    7: ["Férias escolares", "Festa Junina início do mês"],
+    8: ["09/08 Dia dos Povos Indígenas", "Dia dos Pais (2º domingo)"],
+    9: ["07/09 Independência do Brasil", "15/09 Dia do Cliente"],
+    10: ["01/10 Dia das Crianças", "12/10 Nossa Sra Aparecida", "15/10 Dia do Professor", "31/10 Halloween"],
+    11: ["02/11 Finados", "15/11 Proclamação da República", "20/11 Consciência Negra", "Black Friday (última sexta)"],
+    12: ["25/12 Natal", "31/12 Réveillon"],
+  };
+
+  const holidays = HOLIDAYS[month]?.join(", ") ?? "nenhuma data comemorativa relevante";
+
   const prompt = `Voce e um especialista em marketing de conteudo para Instagram no Brasil, com profundo conhecimento do segmento "${niche}".
 
 Crie um calendario de conteudo de 30 dias para ${monthName}/${year} para:
@@ -42,7 +59,7 @@ Nicho: ${niche}
 
 Regras obrigatorias:
 - Varie os formatos: ~40% Reels, ~30% Carrossel, ~20% Feed, ~10% Story
-- Identifique datas comemorativas do mes e crie posts tematicos para elas
+- Datas comemorativas do mes: ${holidays} — crie posts tematicos para elas
 - Cada post deve ser ESPECIFICO para o nicho - nunca generico
 - Legendas em portugues brasileiro informal, sem cliches, maximo 3 frases
 - Hashtags: 6-8 por post, mix de genericas e de nicho
