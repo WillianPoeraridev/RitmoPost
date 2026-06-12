@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { calendar } from "@/lib/schema";
+import { calendar, user } from "@/lib/schema";
 import { CalendarPdf } from "@/lib/pdf";
+import { isProUser, FREE_VISIBLE_DAYS } from "@/lib/plan";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import React from "react";
 import type { DocumentProps } from "@react-pdf/renderer";
+import type { CalendarDay } from "@/lib/schema";
 
 const VALID_COLORS = /^#[0-9a-fA-F]{6}$/;
 
@@ -34,13 +36,26 @@ export async function GET(
     return new NextResponse("Not found", { status: 404 });
   }
 
+  const [dbUser] = await db
+    .select()
+    .from(user)
+    .where(eq(user.id, session.user.id))
+    .limit(1);
+
+  const isPro = isProUser(dbUser);
+  const allDays = cal.content as CalendarDay[];
+  // Free users get a watermarked preview limited to the first days; Pro gets the full clean PDF.
+  const days = isPro ? allDays : allDays.slice(0, FREE_VISIBLE_DAYS);
+
   const element = React.createElement(CalendarPdf, {
     businessName: cal.businessName,
     niche: cal.niche,
     month: cal.month,
     year: cal.year,
-    days: cal.content,
+    days,
     primaryColor,
+    watermark: !isPro,
+    totalDays: allDays.length,
   }) as React.ReactElement<DocumentProps>;
 
   const buffer = await renderToBuffer(element);

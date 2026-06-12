@@ -111,6 +111,37 @@ const styles = StyleSheet.create({
     fontSize: 7,
     color: "#d1d5db",
   },
+  previewBanner: {
+    marginBottom: 10,
+    padding: 6,
+    backgroundColor: "#f5f3ff",
+    borderWidth: 1,
+    borderColor: "#7c3aed",
+    borderRadius: 4,
+    textAlign: "center",
+  },
+  previewBannerText: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: "#6d28d9",
+  },
+  watermarkLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  watermarkText: {
+    fontFamily: "Helvetica-Bold",
+    fontSize: 30,
+    color: "#7c3aed",
+    opacity: 0.18,
+    transform: "rotate(-20deg)",
+  },
 });
 
 type Props = {
@@ -120,9 +151,22 @@ type Props = {
   year: number;
   days: CalendarDay[];
   primaryColor?: string;
+  /** When true, renders a limited preview with an aggressive conversion watermark. */
+  watermark?: boolean;
+  /** Total day count of the full calendar (so the preview can say "7 de 30"). */
+  totalDays?: number;
 };
 
-export function CalendarPdf({ businessName, niche, month, year, days, primaryColor = "#7c3aed" }: Props) {
+export function CalendarPdf({
+  businessName,
+  niche,
+  month,
+  year,
+  days,
+  primaryColor = "#7c3aed",
+  watermark = false,
+  totalDays,
+}: Props) {
   return (
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape">
@@ -137,6 +181,15 @@ export function CalendarPdf({ businessName, niche, month, year, days, primaryCol
           </View>
           <Text style={[styles.badge, { color: primaryColor }]}>PostaJa · postaja.com.br</Text>
         </View>
+
+        {watermark && (
+          <View style={styles.previewBanner}>
+            <Text style={styles.previewBannerText}>
+              PREVIA GRATUITA — {days.length} de {totalDays ?? days.length} dias.
+              Assine o Pro em postaja.com.br para o mes completo e PDF sem marca d&apos;agua.
+            </Text>
+          </View>
+        )}
 
         <View style={styles.grid}>
           {days.map((day) => (
@@ -162,6 +215,16 @@ export function CalendarPdf({ businessName, niche, month, year, days, primaryCol
         <Text style={styles.footer}>
           Criado com PostaJa · postaja.com.br · Conteudo gerado por IA
         </Text>
+
+        {watermark && (
+          <View style={styles.watermarkLayer} fixed>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Text key={i} style={styles.watermarkText}>
+                DESBLOQUEIE EM POSTAJA.COM.BR
+              </Text>
+            ))}
+          </View>
+        )}
       </Page>
     </Document>
   );

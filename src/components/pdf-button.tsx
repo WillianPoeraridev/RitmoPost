@@ -10,7 +10,7 @@ const COLORS = [
   { label: "Preto", value: "#1a1a2e" },
 ];
 
-export function PdfButton({ calendarId }: { calendarId: string }) {
+export function PdfButton({ calendarId, isPro = true }: { calendarId: string; isPro?: boolean }) {
   const [color, setColor] = useState("#7c3aed");
   const [open, setOpen] = useState(false);
 
@@ -20,12 +20,13 @@ export function PdfButton({ calendarId }: { calendarId: string }) {
         <a
           href={`/calendario/${calendarId}/pdf?color=${encodeURIComponent(color)}`}
           target="_blank"
+          title={isPro ? "Baixar PDF completo" : "Prévia com marca d'água — assine o Pro para o PDF limpo"}
           className="bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 text-sm font-medium flex items-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          Baixar PDF
+          {isPro ? "Baixar PDF" : "Baixar prévia"}
         </a>
         <button
           onClick={() => setOpen((v) => !v)}

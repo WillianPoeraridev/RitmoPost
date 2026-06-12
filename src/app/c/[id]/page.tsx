@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { calendar } from "@/lib/schema";
+import { calendar, user } from "@/lib/schema";
+import { isProUser, FREE_VISIBLE_DAYS } from "@/lib/plan";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -32,7 +33,18 @@ export default async function PublicCalendarPage({
 
   if (!cal) notFound();
 
-  const days = cal.content as CalendarDay[];
+  // The public link mirrors the owner's plan: free owners share a 7-day teaser,
+  // Pro owners can share the full calendar as marketing.
+  const [owner] = await db
+    .select()
+    .from(user)
+    .where(eq(user.id, cal.userId))
+    .limit(1);
+
+  const isPro = isProUser(owner);
+  const allDays = cal.content as CalendarDay[];
+  const days = isPro ? allDays : allDays.slice(0, FREE_VISIBLE_DAYS);
+  const lockedCount = allDays.length - days.length;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -50,7 +62,7 @@ export default async function PublicCalendarPage({
         <div className="mb-8">
           <h1 className="text-2xl font-bold">{cal.businessName}</h1>
           <p className="text-slate-400 text-sm mt-1">
-            {cal.niche} · {MONTH_NAMES[cal.month]} {cal.year} · {days.length} dias
+            {cal.niche} · {MONTH_NAMES[cal.month]} {cal.year} · {allDays.length} dias
           </p>
         </div>
 
@@ -89,6 +101,12 @@ export default async function PublicCalendarPage({
             </div>
           ))}
         </div>
+
+        {lockedCount > 0 && (
+          <p className="mt-6 text-center text-slate-400 text-sm">
+            🔒 + {lockedCount} dias no calendário completo
+          </p>
+        )}
 
         <div className="mt-12 text-center bg-slate-900 border border-slate-800 rounded-2xl p-8">
           <p className="text-lg font-semibold mb-2">Quer um calendário assim para o seu negócio?</p>
