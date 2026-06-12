@@ -25,8 +25,8 @@ A tática de venda usa esses dois WOWs **antes de cobrar qualquer centavo**.
 
 | Plano | Preço | O que inclui |
 |-------|-------|--------------|
-| **Free** | Grátis | 1 calendário completo (demo do produto) |
-| **Pro Mensal** | R$29,90/mês | Calendários ilimitados, PDF, histórico 12 meses |
+| **Free** | Grátis | 7 dias visíveis + PDF com marca d'água agressiva (demo do produto) |
+| **Pro Mensal** | R$29,90/mês | 30 dias completos, PDF limpo, histórico 12 meses |
 | **Pro Anual** | R$239/ano | Tudo do Pro + "economize 2 meses" (~R$19,90/mês) |
 
 **Ancoragem futura:**
@@ -35,6 +35,10 @@ A tática de venda usa esses dois WOWs **antes de cobrar qualquer centavo**.
 
 **Por que R$29,90 e não R$19,90:** a tática de demo-antes-de-pagar elimina resistência de preço.
 Para o cliente, R$29,90 é menos que um corte de cabelo. Para nós, é +50% de receita por cliente.
+
+> ⚠️ **Decisão crítica (feedback Fable):** o free tier original entregava o produto inteiro (30 dias + PDF).
+> O cliente gera, baixa, e não volta — pode criar outro email no mês 2. Corrigido: free = 7 dias visíveis
+> + PDF bloqueado ou com marca d'água agressiva. O WOW da demo continua, mas o paywall é real.
 
 ---
 
@@ -232,13 +236,25 @@ Core loop funcionando: gerar → ver → baixar PDF → pagar.
 - [ ] Upload de logo no PDF — requer storage (S3/R2), próxima fase
 - [ ] Programa de referral — requer base de usuários, próxima fase
 
+### Fase 2.5 — Retenção (URGENTE, antes da Fase 3)
+
+> Feedback Fable: churn real de produto com uso mensal único é 10-15%, não 5%.
+> Com 12% de churn e 20 novos/mês, o teto natural é ~165 clientes, não 700.
+> A feature de retenção mais importante está errada de fase — sobe aqui.
+
+- [ ] **WhatsApp Bot: post do dia** — manda o conteúdo do dia automaticamente via Evolution API (é o que muda de ferramenta pra hábito diário)
+- [ ] Free tier: limitar a 7 dias visíveis + bloquear PDF (forçar conversão real)
+- [ ] Marca d'água agressiva no PDF free: "DESBLOQUEIE EM POSTAJA.COM.BR"
+- [ ] Sequência de emails D+3, D+7, D+20, D+28 (já desenhada, falta implementar)
+- [ ] Notificação "novo mês chegando" no D+25
+
 ### Fase 3 — 90 a 180 Dias
 
 - [ ] Integração Meta Business Suite (agenda direto no Instagram)
 - [ ] Gerador de arte básica (fundo + texto + logo via Canvas API)
-- [ ] WhatsApp Bot: manda o post do dia automaticamente
 - [ ] White-label para agências
 - [ ] API pública
+- [ ] Upload de logo no PDF (requer S3/R2)
 
 ---
 
@@ -314,17 +330,31 @@ D+28  "Em uma palavra, como foi o PostaJá este mês?" (NPS)
 
 ## Projeção Financeira
 
-| Mês | Clientes | MRR | Custo infra | Lucro |
-|-----|----------|-----|-------------|-------|
-| 1 | 50 | R$1.495 | R$5 | R$1.490 |
-| 2 | 100 | R$2.990 | R$5 | R$2.985 |
-| 3 | 180 | R$5.382 | R$10 | R$5.372 |
-| 6 | 350 | R$10.465 | R$100 | R$10.365 |
-| 12 | 700 | R$20.930 | R$200 | R$20.730 |
+### Cenário Realista (12% churn, sem WhatsApp Bot)
 
-*5% churn mensal, ~20 novos clientes/mês*
+| Mês | Novos | Churn | Clientes | MRR | Lucro |
+|-----|-------|-------|----------|-----|-------|
+| 1 | 20 | 0 | 20 | R$598 | R$593 |
+| 2 | 20 | 2 | 38 | R$1.136 | R$1.131 |
+| 3 | 20 | 5 | 53 | R$1.585 | R$1.580 |
+| 6 | 20 | 16 | ~110 | R$3.289 | R$3.284 |
+| 12 | 20 | estabiliza | ~165 | R$4.934 | R$4.929 |
+
+*12% churn mensal — teto natural sem retenção ativa ~165 clientes*
+
+### Cenário Com WhatsApp Bot (uso diário = retenção real)
+
+| Mês | Clientes | MRR | Lucro |
+|-----|----------|-----|-------|
+| 6 | 200 | R$5.980 | R$5.975 |
+| 12 | 450 | R$13.455 | R$13.450 |
+
+*Churn estimado 4-6% com uso diário via bot — muda de ferramenta pra hábito*
 
 **Break-even: 4 clientes** (pagam a infra inteira).
+
+> ⚠️ **Conclusão Fable:** sem o WhatsApp Bot, o produto tem uso mensal único e churn alto.
+> O bot é a feature de retenção #1 — está mal posicionado na Fase 3, sobe pra Fase 2.5.
 
 ---
 
@@ -366,4 +396,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-12 — Fases 0, 1 e 2 concluídas. Produto no ar em produção.*
+*Última atualização: 2026-06-12 — Fases 0, 1 e 2 concluídas. Fase 2.5 (retenção) priorizando WhatsApp Bot.*
