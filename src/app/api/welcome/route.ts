@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
-    from: "PostaJá <oi@postaja.com.br>",
+    from: "PostaJá <onboarding@resend.dev>",
     to: session.user.email,
     subject: "Seu acesso está ativo ✨",
     html: `
