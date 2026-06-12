@@ -1,8 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import type { CalendarDay } from "./schema";
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
 const MONTH_NAMES = [
   "",
@@ -54,17 +51,23 @@ Regras obrigatorias:
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
 [{"day":1,"type":"Reels","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}]`;
 
-  const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 4096,
-    messages: [{ role: "user", content: prompt }],
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: process.env.OPENROUTER_MODEL ?? "anthropic/claude-haiku-4-5",
+      max_tokens: 4096,
+      messages: [{ role: "user", content: prompt }],
+    }),
   });
 
-  const content = message.content[0];
-  if (content.type !== "text") throw new Error("Unexpected response type");
+  if (!res.ok) throw new Error(`OpenRouter error: ${res.status}`);
 
-  const text = content.text.trim();
-  // Strip potential markdown code fences
+  const data = await res.json();
+  const text = (data.choices[0].message.content as string).trim();
   const jsonText = text.startsWith("```")
     ? text.replace(/```(?:json)?\n?/g, "").trim()
     : text;

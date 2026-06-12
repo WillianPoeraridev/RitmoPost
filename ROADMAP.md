@@ -45,7 +45,7 @@ Next.js 16 (App Router) + TypeScript strict
 Neon PostgreSQL (serverless, free tier)
 Drizzle ORM
 Better Auth (email + senha — sem OAuth no MVP)
-Claude claude-haiku-4-5-20251001 (Anthropic) — melhor em PT-BR, barato
+OpenRouter API — modelo configurável via OPENROUTER_MODEL (default: anthropic/claude-haiku-4-5)
 @react-pdf/renderer — gera PDF no servidor
 Stripe — PIX + cartão recorrente
 Resend — emails transacionais
@@ -58,7 +58,7 @@ Vercel — deploy automático
 |------|-------|
 | Vercel hobby | $0 |
 | Neon free tier | $0 |
-| Claude API (100 clientes × 4 gerações) | ~R$1,50/mês |
+| OpenRouter (100 clientes × 4 gerações, claude-haiku) | ~R$1,50/mês |
 | Resend free tier | $0 |
 | **Total até 500 clientes** | **< R$5/mês** |
 
@@ -181,7 +181,8 @@ Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
 DATABASE_URL=             # Neon → Settings → Connection string
 BETTER_AUTH_SECRET=       # openssl rand -base64 32
 BETTER_AUTH_URL=          # http://localhost:3000 (dev) | https://postaja.com.br (prod)
-ANTHROPIC_API_KEY=        # console.anthropic.com
+OPENROUTER_API_KEY=       # openrouter.ai → API Keys
+OPENROUTER_MODEL=         # opcional — default: anthropic/claude-haiku-4-5
 STRIPE_SECRET_KEY=        # dashboard.stripe.com → Developers → API keys
 STRIPE_WEBHOOK_SECRET=    # stripe listen --forward-to localhost:3000/api/stripe/webhook
 STRIPE_PRICE_ID_MONTHLY=  # ID do plano R$29,90/mês no Stripe
@@ -195,19 +196,20 @@ ADMIN_SECRET=             # senha forte para /admin/demo
 
 ## Roadmap de Features
 
-### Fase 0 — MVP (Dia 1)
+### Fase 0 — MVP (Dia 1) ✅ CONCLUÍDO
 Core loop funcionando: gerar → ver → baixar PDF → pagar.
 
 - [x] Setup Next.js 16 + Drizzle + Neon + Better Auth
-- [ ] Formulário: nicho + nome do negócio
-- [ ] Geração de calendário via Claude haiku
-- [ ] Grid visual 30 dias
-- [ ] Export PDF (react-pdf)
-- [ ] Paywall: free = 1 geração, pro = ilimitado
-- [ ] Stripe Checkout (PIX + Cartão)
-- [ ] Webhook Stripe → ativa plano
-- [ ] /admin/demo (gera sem paywall, para demos de venda)
-- [ ] Landing page com demo embutido sem login
+- [x] Formulário: nicho + nome do negócio
+- [x] Geração de calendário via OpenRouter (claude-haiku-4-5)
+- [x] Grid visual 30 dias
+- [x] Export PDF (react-pdf)
+- [x] Paywall: free = 1 geração, pro = ilimitado
+- [x] Stripe Checkout (PIX + Cartão)
+- [x] Webhook Stripe → ativa plano
+- [x] /admin/demo (gera sem paywall, para demos de venda)
+- [x] Landing page com demo embutido sem login
+- [x] Deploy em produção (Vercel + Neon) — https://postaja-gold.vercel.app
 
 ### Fase 1 — Primeiros 30 Dias
 
@@ -363,4 +365,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-11 — MVP sendo construído*
+*Última atualização: 2026-06-12 — MVP no ar em produção*

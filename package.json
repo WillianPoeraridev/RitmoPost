@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:push": "npx dotenv-cli -e .env.local -- drizzle-kit push",
+    "db:generate": "npx dotenv-cli -e .env.local -- drizzle-kit generate",
+    "db:studio": "npx dotenv-cli -e .env.local -- drizzle-kit studio"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.104.1",
     "@neondatabase/serverless": "^1.1.0",
     "@react-pdf/renderer": "^4.5.1",
     "better-auth": "^1.6.16",
