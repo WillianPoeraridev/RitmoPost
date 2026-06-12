@@ -1,4 +1,4 @@
-# PostaJá — Fluxo de Trabalho em Equipe
+# RitmoPost — Fluxo de Trabalho em Equipe
 
 > Cole este arquivo no contexto da sua LLM antes de começar a codar.
 > Pré-requisito: você já rodou `git checkout main && git pull`.

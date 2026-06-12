@@ -179,14 +179,14 @@ export function CalendarPdf({
               {businessName} · {niche}
             </Text>
           </View>
-          <Text style={[styles.badge, { color: primaryColor }]}>PostaJa · postaja.com.br</Text>
+          <Text style={[styles.badge, { color: primaryColor }]}>RitmoPost · ritmopost.com.br</Text>
         </View>
 
         {watermark && (
           <View style={styles.previewBanner}>
             <Text style={styles.previewBannerText}>
               PREVIA GRATUITA — {days.length} de {totalDays ?? days.length} dias.
-              Assine o Pro em postaja.com.br para o mes completo e PDF sem marca d&apos;agua.
+              Assine o Pro em ritmopost.com.br para o mes completo e PDF sem marca d&apos;agua.
             </Text>
           </View>
         )}
@@ -213,14 +213,14 @@ export function CalendarPdf({
         </View>
 
         <Text style={styles.footer}>
-          Criado com PostaJa · postaja.com.br · Conteudo gerado por IA
+          Criado com RitmoPost · ritmopost.com.br · Conteudo gerado por IA
         </Text>
 
         {watermark && (
           <View style={styles.watermarkLayer} fixed>
             {Array.from({ length: 5 }).map((_, i) => (
               <Text key={i} style={styles.watermarkText}>
-                DESBLOQUEIE EM POSTAJA.COM.BR
+                DESBLOQUEIE EM RITMOPOST.COM.BR
               </Text>
             ))}
           </View>

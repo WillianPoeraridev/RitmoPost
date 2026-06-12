@@ -46,7 +46,7 @@ export default function CadastroPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-bold text-violet-400">
-            PostaJá
+            RitmoPost
           </Link>
           <p className="text-slate-400 mt-2 text-sm">
             Crie sua conta e gere seu primeiro calendário grátis

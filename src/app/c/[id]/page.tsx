@@ -49,7 +49,7 @@ export default async function PublicCalendarPage({
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-violet-400">PostaJá</Link>
+        <Link href="/" className="text-xl font-bold text-violet-400">RitmoPost</Link>
         <Link
           href="/"
           className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium"

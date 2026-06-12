@@ -72,7 +72,7 @@ export default function GerarPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/dashboard" className="text-xl font-bold text-violet-400">PostaJá</Link>
+        <Link href="/dashboard" className="text-xl font-bold text-violet-400">RitmoPost</Link>
         <Link href="/dashboard" className="text-sm text-slate-400 hover:text-white transition-colors">
           ← Meus calendários
         </Link>

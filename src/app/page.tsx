@@ -24,7 +24,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-violet-400">PostaJá</span>
+        <span className="text-xl font-bold text-violet-400">RitmoPost</span>
         <div className="flex gap-3">
           <Link
             href="/login"
@@ -126,7 +126,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-slate-800 py-8 text-center text-slate-600 text-sm">
-        PostaJá · Conteúdo para Instagram com IA · contato@postaja.com.br
+        RitmoPost · Conteúdo para Instagram com IA · contato@ritmopost.com.br
       </footer>
     </div>
   );

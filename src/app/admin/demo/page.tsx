@@ -75,7 +75,7 @@ export default function AdminDemoPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-violet-400">PostaJá</span>
+        <span className="text-xl font-bold text-violet-400">RitmoPost</span>
         <span className="text-xs bg-amber-600/30 border border-amber-600/50 text-amber-300 px-2 py-1 rounded-full">
           Admin Demo
         </span>

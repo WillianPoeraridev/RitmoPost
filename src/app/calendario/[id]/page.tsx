@@ -53,7 +53,7 @@ export default async function CalendarioPage({
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
         <Link href="/dashboard" className="text-xl font-bold text-violet-400">
-          PostaJá
+          RitmoPost
         </Link>
         <Link
           href="/dashboard"

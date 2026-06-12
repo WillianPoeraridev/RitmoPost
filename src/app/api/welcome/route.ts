@@ -17,12 +17,12 @@ export async function POST(req: NextRequest) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
-    from: "PostaJá <onboarding@resend.dev>",
+    from: "RitmoPost <onboarding@resend.dev>",
     to: session.user.email,
     subject: "Seu acesso está ativo ✨",
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;color:#1a1a2e">
-        <h2 style="color:#7c3aed">Bem-vindo ao PostaJá, ${name}! 🎉</h2>
+        <h2 style="color:#7c3aed">Bem-vindo ao RitmoPost, ${name}! 🎉</h2>
         <p>Seu acesso está ativo. Você tem <strong>1 calendário grátis</strong> pra usar agora.</p>
         <p style="margin:24px 0">
           <a href="${process.env.NEXT_PUBLIC_URL}/gerar"
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
           Se tiver qualquer dúvida, é só responder esse email.
         </p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
-        <p style="color:#9ca3af;font-size:12px">PostaJá · postaja.com.br</p>
+        <p style="color:#9ca3af;font-size:12px">RitmoPost · ritmopost.com.br</p>
       </div>
     `,
   });
