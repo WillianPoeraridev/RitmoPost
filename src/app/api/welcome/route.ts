@@ -4,8 +4,6 @@ import { headers } from "next/headers";
 import { Resend } from "resend";
 import { z } from "zod";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const bodySchema = z.object({ name: z.string().min(1) });
 
 export async function POST(req: NextRequest) {
@@ -17,6 +15,7 @@ export async function POST(req: NextRequest) {
 
   const { name } = parsed.data;
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
     from: "PostaJá <oi@postaja.com.br>",
     to: session.user.email,
