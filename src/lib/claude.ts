@@ -1,5 +1,47 @@
 import { z } from "zod";
-import type { CalendarDay } from "./schema";
+import type { CalendarDay, BusinessService, BusinessTone } from "./schema";
+
+// Subconjunto do perfil do negócio usado para enriquecer o prompt.
+// Opcional em todas as gerações: sem perfil, o prompt continua igual ao de antes.
+export type ProfileContext = {
+  services?: BusinessService[];
+  tone?: BusinessTone;
+  differentials?: string;
+  city?: string;
+  neighborhood?: string;
+  recurringPromos?: string | null;
+};
+
+const TONE_LABELS: Record<BusinessTone, string> = {
+  descontraido: "descontraido e proximo, como uma conversa com cliente fiel",
+  profissional: "profissional e confiavel, sem ser engessado",
+  premium: "sofisticado e exclusivo, transmitindo alto padrao",
+};
+
+function buildProfileBlock(profile?: ProfileContext): string {
+  if (!profile) return "";
+  const lines: string[] = [];
+  if (profile.services?.length) {
+    const services = profile.services
+      .map((s) => (s.price ? `${s.name} (${s.price})` : s.name))
+      .join(", ");
+    lines.push(`- Servicos e precos reais: ${services}`);
+  }
+  if (profile.tone) lines.push(`- Tom de voz: ${TONE_LABELS[profile.tone]}`);
+  if (profile.differentials) lines.push(`- Diferenciais: ${profile.differentials}`);
+  const location = [profile.neighborhood, profile.city].filter(Boolean).join(", ");
+  if (location) lines.push(`- Localizacao: ${location}`);
+  if (profile.recurringPromos) lines.push(`- Promocoes recorrentes: ${profile.recurringPromos}`);
+  if (!lines.length) return "";
+  return `\nPerfil do negocio (use estes dados reais nos posts):\n${lines.join("\n")}\n`;
+}
+
+function profileRules(profile?: ProfileContext): string {
+  if (!profile || !buildProfileBlock(profile)) return "";
+  return `\n- Cite servicos e precos REAIS do perfil em varios posts (CTAs com preco convertem mais)
+- Pelo menos 5 posts do mes devem citar o bairro ou a cidade do perfil — gera identificacao local
+- Escreva TODAS as legendas no tom de voz informado no perfil`;
+}
 
 const MONTH_NAMES = [
   "",
@@ -54,7 +96,11 @@ function getNicheContext(niche: string): string {
   return partial ? NICHE_TEMPLATES[partial] : "";
 }
 
-async function callOpenRouter(prompt: string, maxTokens: number): Promise<string> {
+async function callOpenRouter(
+  prompt: string,
+  maxTokens: number,
+  temperature?: number
+): Promise<string> {
   if (!process.env.OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY is not set");
   }
@@ -68,6 +114,7 @@ async function callOpenRouter(prompt: string, maxTokens: number): Promise<string
     body: JSON.stringify({
       model: process.env.OPENROUTER_MODEL ?? "anthropic/claude-haiku-4-5",
       max_tokens: maxTokens,
+      ...(temperature !== undefined ? { temperature } : {}),
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -91,16 +138,41 @@ async function callOpenRouter(prompt: string, maxTokens: number): Promise<string
   return text.startsWith("```") ? text.replace(/```(?:json)?\n?/g, "").trim() : text;
 }
 
-// JSON.parse with a clear error message that includes a snippet of the raw text,
-// so failures (truncation, stray markdown) are diagnosable instead of opaque.
-function parseJsonOrThrow(text: string, context: string): unknown {
+// Tenta consertar malformações comuns que o modelo emite (~10% das gerações com
+// haiku): prosa antes/depois do JSON, vírgula sobrando antes de ] ou }, e vírgula
+// FALTANDO entre dois objetos adjacentes — a causa do erro "Expected ',' or ']'".
+function salvageJson(text: string, arrayRoot: boolean): string {
+  let t = text.trim();
+  // Recorta do primeiro delimitador de abertura até o último de fechamento,
+  // descartando qualquer texto que o modelo tenha colocado em volta.
+  const open = arrayRoot ? "[" : "{";
+  const close = arrayRoot ? "]" : "}";
+  const start = t.indexOf(open);
+  const end = t.lastIndexOf(close);
+  if (start !== -1 && end !== -1 && end > start) {
+    t = t.slice(start, end + 1);
+  }
+  // Vírgula faltando entre objetos: `} {` ou `}\n{` → `},{`
+  t = t.replace(/\}(\s*)\{/g, "},$1{");
+  // Vírgula sobrando antes do fechamento: `, ]` → `]`
+  t = t.replace(/,(\s*[\]}])/g, "$1");
+  return t;
+}
+
+// JSON.parse tolerante: tenta o texto cru e, se falhar, tenta a versão "salvada".
+// Erro inclui um trecho do texto para diagnóstico (truncamento, markdown solto).
+function parseJsonOrThrow(text: string, context: string, arrayRoot = true): unknown {
   try {
     return JSON.parse(text);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    throw new Error(
-      `Failed to parse ${context} JSON (${msg}). Length=${text.length}. Tail: ${text.slice(-200)}`
-    );
+  } catch {
+    try {
+      return JSON.parse(salvageJson(text, arrayRoot));
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      throw new Error(
+        `Failed to parse ${context} JSON (${msg}). Length=${text.length}. Tail: ${text.slice(-200)}`
+      );
+    }
   }
 }
 
@@ -118,14 +190,14 @@ export async function generateSingleDay(
   businessName: string,
   month: number,
   year: number,
-  day: number
+  day: number,
+  profile?: ProfileContext
 ): Promise<CalendarDay> {
   const monthName = MONTH_NAMES[month];
   const nicheContext = getNicheContext(niche);
 
   const prompt = `Voce e um especialista em marketing de conteudo para Instagram no Brasil, nicho "${niche}".
-${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}
-
+${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}${buildProfileBlock(profile)}
 Crie 1 post para o Dia ${day} de ${monthName}/${year} para:
 Negocio: ${businessName}
 Nicho: ${niche}
@@ -133,48 +205,68 @@ Nicho: ${niche}
 Regras:
 - Escolha o formato mais adequado para o dia (Reels, Carrossel, Story ou Feed)
 - Post ESPECIFICO para o nicho, nunca generico
-- Legenda em portugues brasileiro informal, sem cliches, maximo 3 frases
-- Hashtags: 6-8, mix de genericas e de nicho
-- Hook deve parar o scroll em 2 segundos
+- Legenda em portugues brasileiro informal, sem cliches, NO MAXIMO 3 frases curtas
+- Hashtags: EXATAMENTE de 6 a 8 — nunca menos que 6 — mix de genericas e de nicho
+- Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
-Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
+Retorne SOMENTE um objeto JSON valido (sem markdown, sem texto adicional). Use aspas duplas e escape aspas dentro dos textos. Formato:
 {"day":${day},"type":"Reels","theme":"tema especifico","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}`;
 
-  const text = await callOpenRouter(prompt, 700);
-  return calendarDaySchema.parse(parseJsonOrThrow(text, "single day")) as CalendarDay;
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const text = await callOpenRouter(prompt, 700, attempt === 1 ? undefined : 0.4);
+      return calendarDaySchema.parse(parseJsonOrThrow(text, "single day", false)) as CalendarDay;
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[generateSingleDay] tentativa ${attempt}/3 falhou:`, err instanceof Error ? err.message : err);
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
 export async function generateCalendar(
   niche: string,
   businessName: string,
   month: number,
-  year: number
+  year: number,
+  profile?: ProfileContext
 ): Promise<CalendarDay[]> {
   const monthName = MONTH_NAMES[month];
   const holidays = HOLIDAYS[month]?.join(", ") ?? "nenhuma data comemorativa relevante";
   const nicheContext = getNicheContext(niche);
 
   const prompt = `Voce e um especialista em marketing de conteudo para Instagram no Brasil, com profundo conhecimento do segmento "${niche}".
-${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}
-
+${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}${buildProfileBlock(profile)}
 Crie um calendario de conteudo de 30 dias para ${monthName}/${year} para:
 Negocio: ${businessName}
 Nicho: ${niche}
 
 Regras obrigatorias:
-- Varie os formatos: ~40% Reels, ~30% Carrossel, ~20% Feed, ~10% Story
+- Distribuicao EXATA dos formatos no mes: 12 Reels, 9 Carrossel, 6 Feed, 3 Story
 - Datas comemorativas do mes: ${holidays} — crie posts tematicos para elas
 - Cada post deve ser ESPECIFICO para o nicho - nunca generico
-- Legendas em portugues brasileiro informal, sem cliches, maximo 3 frases
-- Hashtags: 6-8 por post, mix de genericas e de nicho
-- Hook deve parar o scroll em 2 segundos
+- Legendas em portugues brasileiro informal, sem cliches, NO MAXIMO 3 frases curtas (conte as frases antes de finalizar)
+- Hashtags: EXATAMENTE de 6 a 8 por post — nunca menos que 6 — mix de genericas e de nicho
+- Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
-Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
+Retorne SOMENTE um array JSON valido (sem markdown, sem texto adicional). Use aspas duplas e escape aspas dentro dos textos. Formato de cada item:
 [{"day":1,"type":"Reels","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}]`;
 
-  const text = await callOpenRouter(prompt, 8000);
-  const parsed = parseJsonOrThrow(text, "calendar");
-  return z.array(calendarDaySchema).parse(parsed) as CalendarDay[];
+  // Haiku emite JSON inválido em ~10% das gerações. Salvamos o que dá e, se ainda
+  // assim falhar, regeneramos — uma tentativa nova quase sempre sai válida.
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const text = await callOpenRouter(prompt, 8000, attempt === 1 ? undefined : 0.4);
+      const parsed = parseJsonOrThrow(text, "calendar", true);
+      return z.array(calendarDaySchema).parse(parsed) as CalendarDay[];
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[generateCalendar] tentativa ${attempt}/3 falhou:`, err instanceof Error ? err.message : err);
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
 export async function generateReelsScript(

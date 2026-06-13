@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { UpgradeButton } from "@/components/upgrade-button";
 import { SignOutButton } from "@/components/sign-out-button";
+import { WhatsAppSettings } from "@/components/whatsapp-settings";
 
 const MONTH_NAMES = [
   "", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
@@ -94,6 +95,12 @@ export default async function DashboardPage({
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/perfil"
+              className="text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 px-3 py-2 rounded-lg transition-colors"
+            >
+              Perfis do negócio
+            </Link>
             {calendars.length > 0 && (
               <Link
                 href={agencyMode ? "/dashboard" : "/dashboard?view=agencia"}
@@ -110,6 +117,13 @@ export default async function DashboardPage({
             </Link>
           </div>
         </div>
+
+        {isPro && (
+          <WhatsAppSettings
+            initialNumber={dbUser?.whatsappNumber ?? ""}
+            initialOptIn={dbUser?.whatsappOptIn ?? false}
+          />
+        )}
 
         {!isPro && generationsUsed >= 1 && (
           <div className="bg-violet-900/20 border border-violet-700/50 rounded-xl p-5 mb-8 flex items-center justify-between gap-4">

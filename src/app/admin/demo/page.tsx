@@ -20,10 +20,23 @@ const NICHO_SUGGESTIONS = [
   "Lanchonete", "Pizzaria", "Pet Shop", "Fotografia",
 ];
 
+const TONE_OPTIONS = [
+  { value: "", label: "Tom padrão" },
+  { value: "descontraido", label: "Descontraído" },
+  { value: "profissional", label: "Profissional" },
+  { value: "premium", label: "Premium" },
+];
+
 export default function AdminDemoPage() {
   const [secret, setSecret] = useState("");
   const [niche, setNiche] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [servicesText, setServicesText] = useState("");
+  const [tone, setTone] = useState("");
+  const [city, setCity] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [differentials, setDifferentials] = useState("");
+  const [recurringPromos, setRecurringPromos] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<{
@@ -41,7 +54,17 @@ export default function AdminDemoPage() {
     const res = await fetch("/api/admin/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ niche, businessName, secret }),
+      body: JSON.stringify({
+        niche,
+        businessName,
+        secret,
+        ...(servicesText.trim() ? { servicesText: servicesText.trim() } : {}),
+        ...(tone ? { tone } : {}),
+        ...(city.trim() ? { city: city.trim() } : {}),
+        ...(neighborhood.trim() ? { neighborhood: neighborhood.trim() } : {}),
+        ...(differentials.trim() ? { differentials: differentials.trim() } : {}),
+        ...(recurringPromos.trim() ? { recurringPromos: recurringPromos.trim() } : {}),
+      }),
     });
 
     if (res.status === 401) {
@@ -134,6 +157,78 @@ export default function AdminDemoPage() {
               />
             </div>
           </div>
+          <details className="mt-4">
+            <summary className="text-sm text-violet-400 cursor-pointer select-none">
+              Perfil do prospect (opcional — dispara o WOW da personalização)
+            </summary>
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
+              <div className="sm:col-span-2">
+                <label className="block text-sm text-slate-400 mb-1">
+                  Serviços e preços (separados por vírgula)
+                </label>
+                <input
+                  type="text"
+                  value={servicesText}
+                  onChange={(e) => setServicesText(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  placeholder="Corte R$35, Combo corte+barba R$50, Sobrancelha R$15"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Tom de voz</label>
+                <select
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-violet-500 transition-colors"
+                >
+                  {TONE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Diferenciais</label>
+                <input
+                  type="text"
+                  value={differentials}
+                  onChange={(e) => setDifferentials(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  placeholder="Único aberto até 22h..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Cidade</label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  placeholder="Tramandaí"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Bairro</label>
+                <input
+                  type="text"
+                  value={neighborhood}
+                  onChange={(e) => setNeighborhood(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  placeholder="Centro"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm text-slate-400 mb-1">Promoções recorrentes</label>
+                <input
+                  type="text"
+                  value={recurringPromos}
+                  onChange={(e) => setRecurringPromos(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  placeholder="Terça 20% off, combo de sexta..."
+                />
+              </div>
+            </div>
+          </details>
+
           <button
             type="submit"
             disabled={loading}
