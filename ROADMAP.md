@@ -17,8 +17,8 @@
 |-----|------|--------|
 | **1** (12/06) | Fechar o free tier real (7 dias + PDF marca d'água) + rebrand RitmoPost + domínio | ✅ |
 | **2-3** (13-14/06) | **Perfil do Negócio** — cadastro rico (serviços, preços, tom, bairro) injetado no prompt | ✅ na branch `feat/perfil-negocio` — migration aplicada + QA E2E passou; falta só revisar e mergear |
-| **4-5** (15-16/06) | **WhatsApp delivery** — post do dia às 8h no zap, legenda pronta pra copiar (Evolution API) | ⏳ |
-| **6** (17/06) | Qualidade — rodar geração nos 10 nichos com perfis fictícios reais, refinar prompts, validar Zod | ⏳ |
+| **4-5** (15-16/06) | **WhatsApp delivery** — post do dia às 8h no zap, legenda pronta pra copiar (Evolution API) | 🟡 lado do app pronto e testado com mock — falta só a VPS (decisão do Willian) |
+| **6** (17/06) | Qualidade — rodar geração nos 10 nichos com perfis fictícios reais, refinar prompts, validar Zod | ✅ antecipado — relatório em `qa/2026-06-13-qualidade-10-nichos.md` |
 | **7** (18-19/06) | QA do fluxo completo + gravar Reels da demo + montar lista de 50 leads no Instagram | ⏳ |
 | **20/06** | **PRIMEIRA DM.** | 🎯 |
 
@@ -210,9 +210,10 @@ RESEND_API_KEY=           # resend.com → API Keys
 NEXT_PUBLIC_URL=          # URL pública (Vercel ou domínio)
 ADMIN_SECRET=             # senha forte para /admin/demo
 # WhatsApp delivery (dias 4-5)
-EVOLUTION_API_URL=        # http://IP_DA_VPS:8080
+EVOLUTION_API_URL=        # http://IP_DA_VPS:8080 (dev: http://localhost:8099 com qa/mock-evolution.cjs)
 EVOLUTION_API_KEY=        # chave global da instância Evolution
 EVOLUTION_INSTANCE=       # nome da instância conectada ao número
+CRON_SECRET=              # Bearer do Vercel Cron → /api/cron/whatsapp-daily (openssl rand -hex 32)
 ```
 
 ---
@@ -255,8 +256,8 @@ Core loop: gerar → ver → baixar PDF → pagar.
 - [x] **Free tier real** — 7 dias visíveis + PDF marca d'água agressiva + cards bloqueados (sem vazar conteúdo) — *verificado em prod, 16/16 checks*
 - [x] **Rebrand RitmoPost** + domínio
 - [x] **Perfil do Negócio (dias 2-3)** — ✅ **pronto na branch `feat/perfil-negocio`, verificado E2E — falta só revisar e mergear**: tabela `business_profiles`, página `/perfil` (CRUD), fluxo `/gerar` por perfil (com modo manual de fallback), prompt enriquecido (serviços/preços, tom, bairro, promoções), regenerar-dia herda o perfil, `/admin/demo` com campos de perfil do prospect, retrocompat total (calendários antigos com `profile_id` NULL). **Migration já aplicada no Neon** (`drizzle-kit push`, DDL aditiva — SQL em `drizzle/2026-06-12_business_profiles.sql`). QA E2E via API passou: cadastro → criar/editar/excluir perfil → gerar com perfil (posts citaram o combo R$50, o Centro de Tramandaí e a promoção do perfil de teste) → regenerar dia herdando o perfil → paywall 402 intacto → calendário órfão (perfil excluído) abre e regenera → `/admin/demo` com perfil do prospect citou preço e bairro. Dados de teste removidos do banco.
-- [ ] **WhatsApp delivery (dias 4-5)** — post do dia às 8h via Evolution API, legenda formatada pronta pra copiar (retenção: vira hábito diário)
-- [ ] **Qualidade (dia 6)** — rodar 10 nichos com perfis fictícios, refinar prompts, validar Zod em todos os casos
+- [ ] **WhatsApp delivery (dias 4-5)** — 🟡 **lado do app pronto na branch, testado E2E com mock**: colunas `whatsapp_number`/`whatsapp_opt_in` no user (migration aplicada), card de opt-in no dashboard (só Pro), `/api/whatsapp-settings`, client Evolution (`src/lib/evolution.ts`), cron `/api/cron/whatsapp-daily` (8h BRT via `vercel.json`, protegido por `CRON_SECRET`, fuso América/São_Paulo, pega o calendário mais recente do mês). Mock da Evolution em `qa/mock-evolution.cjs` + seed em `qa/seed-whatsapp-test.cjs`. **Falta (decisão/ação do Willian): contratar VPS Hetzner, subir Evolution via Docker, conectar o número, setar EVOLUTION_* e CRON_SECRET reais na Vercel.**
+- [x] **Qualidade (dia 6)** — ✅ antecipado: 10 nichos gerados com perfis fictícios (Zod 10/10, promo citada 10/10, preços em 12-26 dias/30), 4 desvios sistemáticos achados e corrigidos no prompt (hashtags <6, legendas longas, poucos Reels, poucas refs locais), re-teste nos 5 piores nichos confirmou a melhora (legendas longas 23→2, hashtags <6 ~26→4 dias). Relatório completo: `qa/2026-06-13-qualidade-10-nichos.md`. Harness reutilizável em `qa/`.
 - [ ] **QA + lançamento (dia 7)** — fluxo completo (cadastro → perfil → gerar → PDF → pagar → WhatsApp), Reels da demo, lista de 50 leads
 - [ ] Sequência de emails D+3, D+7, D+20, D+28
 - [ ] Notificação "novo mês chegando" no D+25
@@ -402,4 +403,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-13 (madrugada, Claude autônomo) — Perfil do Negócio FECHADO na branch `feat/perfil-negocio`: migration aplicada no Neon, QA E2E completo passou (geração com perfil citando preços/bairro, regenerar dia, paywall, retrocompat de calendário órfão, admin/demo com perfil do prospect), dados de teste limpos. Pendente: Willian revisar a branch e mergear na main. Próximo: WhatsApp delivery (dias 4-5).*
+*Última atualização: 2026-06-13 (madrugada, Claude autônomo) — Noite rendeu 3 itens do sprint: (1) Perfil do Negócio FECHADO (migration + QA E2E); (2) WhatsApp delivery com o lado do app PRONTO e testado com mock — falta só a VPS; (3) dia 6 de Qualidade ANTECIPADO: 10 nichos testados, prompt refinado, re-teste validou. Pendente do Willian: revisar/mergear a branch `feat/perfil-negocio`, contratar a VPS Hetzner e configurar EVOLUTION_*/CRON_SECRET na Vercel. Restam do sprint: plugar a VPS, QA final + Reels da demo + lista de leads (dia 7).*
