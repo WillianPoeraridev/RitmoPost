@@ -39,7 +39,7 @@ function buildProfileBlock(profile?: ProfileContext): string {
 function profileRules(profile?: ProfileContext): string {
   if (!profile || !buildProfileBlock(profile)) return "";
   return `\n- Cite servicos e precos REAIS do perfil em varios posts (CTAs com preco convertem mais)
-- Faca referencias locais (bairro/cidade) quando fizer sentido — gera identificacao
+- Pelo menos 5 posts do mes devem citar o bairro ou a cidade do perfil — gera identificacao local
 - Escreva TODAS as legendas no tom de voz informado no perfil`;
 }
 
@@ -175,8 +175,8 @@ Nicho: ${niche}
 Regras:
 - Escolha o formato mais adequado para o dia (Reels, Carrossel, Story ou Feed)
 - Post ESPECIFICO para o nicho, nunca generico
-- Legenda em portugues brasileiro informal, sem cliches, maximo 3 frases
-- Hashtags: 6-8, mix de genericas e de nicho
+- Legenda em portugues brasileiro informal, sem cliches, NO MAXIMO 3 frases curtas
+- Hashtags: EXATAMENTE de 6 a 8 — nunca menos que 6 — mix de genericas e de nicho
 - Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
@@ -204,11 +204,11 @@ Negocio: ${businessName}
 Nicho: ${niche}
 
 Regras obrigatorias:
-- Varie os formatos: ~40% Reels, ~30% Carrossel, ~20% Feed, ~10% Story
+- Distribuicao EXATA dos formatos no mes: 12 Reels, 9 Carrossel, 6 Feed, 3 Story
 - Datas comemorativas do mes: ${holidays} — crie posts tematicos para elas
 - Cada post deve ser ESPECIFICO para o nicho - nunca generico
-- Legendas em portugues brasileiro informal, sem cliches, maximo 3 frases
-- Hashtags: 6-8 por post, mix de genericas e de nicho
+- Legendas em portugues brasileiro informal, sem cliches, NO MAXIMO 3 frases curtas (conte as frases antes de finalizar)
+- Hashtags: EXATAMENTE de 6 a 8 por post — nunca menos que 6 — mix de genericas e de nicho
 - Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):

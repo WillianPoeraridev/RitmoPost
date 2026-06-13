@@ -1,0 +1,102 @@
+[
+  {
+    "niche": "Barbearia",
+    "businessName": "Barbearia Navalha de Ouro",
+    "servicesText": "Corte degradê R$35, Combo corte+barba R$55, Sobrancelha R$15, Pigmentação R$40",
+    "tone": "descontraido",
+    "city": "Tramandaí",
+    "neighborhood": "Centro",
+    "differentials": "atende até 22h, agendamento pelo WhatsApp, cerveja gelada na espera",
+    "recurringPromos": "segunda-feira corte R$25 pra estudante"
+  },
+  {
+    "niche": "Salão de Beleza",
+    "businessName": "Studio Ana Hair",
+    "servicesText": "Escova progressiva R$180, Coloração R$120, Hidratação R$60, Corte feminino R$50",
+    "tone": "profissional",
+    "city": "Capão da Canoa",
+    "neighborhood": "Zona Nova",
+    "differentials": "produtos Wella e L'Oréal, 15 anos de experiência",
+    "recurringPromos": "pacote noiva com 10% off"
+  },
+  {
+    "niche": "Estética",
+    "businessName": "Clínica Belle Vie",
+    "servicesText": "Limpeza de pele R$90, Drenagem linfática R$80, Botox a partir de R$350, Microagulhamento R$150",
+    "tone": "premium",
+    "city": "Torres",
+    "neighborhood": "Praia Grande",
+    "differentials": "biomédica responsável, equipamentos de última geração, ambiente climatizado",
+    "recurringPromos": "pacote 4 drenagens R$280"
+  },
+  {
+    "niche": "Personal Trainer",
+    "businessName": "Treino com Foco - Rafa Personal",
+    "servicesText": "Plano mensal 3x semana R$280, Avaliação física R$80, Consultoria online R$150/mês",
+    "tone": "descontraido",
+    "city": "Tramandaí",
+    "neighborhood": "Barra",
+    "differentials": "treino na praia ou na academia, acompanhamento nutricional incluso",
+    "recurringPromos": "traga um amigo e ganhe 1 semana grátis"
+  },
+  {
+    "niche": "Lanchonete",
+    "businessName": "Lancheria do Beto",
+    "servicesText": "X-salada R$22, X-tudo R$32, Combo xis+fritas+refri R$42, Porção de polenta R$25",
+    "tone": "descontraido",
+    "city": "Imbé",
+    "neighborhood": "Centro",
+    "differentials": "xis gigante de verdade, entrega grátis até 3km, aberto até 1h da manhã",
+    "recurringPromos": "quarta do xis em dobro"
+  },
+  {
+    "niche": "Pizzaria",
+    "businessName": "Pizzaria Forno a Lenha Di Casa",
+    "servicesText": "Pizza grande R$55, Pizza família R$70, Broto doce R$30, Rodízio R$49,90 por pessoa",
+    "tone": "profissional",
+    "city": "Osório",
+    "neighborhood": "Centro",
+    "differentials": "forno a lenha de verdade, massa de fermentação natural 48h",
+    "recurringPromos": "terça e quinta rodízio com sobremesa grátis"
+  },
+  {
+    "niche": "Açaí",
+    "businessName": "Açaí Mania Beach",
+    "servicesText": "Copo 300ml R$12, Copo 500ml R$18, Barca família R$45, Açaí zero açúcar +R$3",
+    "tone": "descontraido",
+    "city": "Tramandaí",
+    "neighborhood": "Beira-Mar",
+    "differentials": "açaí puro do Pará, 30 acompanhamentos, fica de frente pro mar",
+    "recurringPromos": "happy hour 15h-17h copo 500ml por R$15"
+  },
+  {
+    "niche": "Fotografia",
+    "businessName": "Lente Azul Fotografia",
+    "servicesText": "Ensaio gestante R$350, Casamento a partir de R$2.500, Ensaio família na praia R$280, Aniversário infantil R$450",
+    "tone": "premium",
+    "city": "Capão da Canoa",
+    "neighborhood": "Centro",
+    "differentials": "entrega em 7 dias, álbum impresso incluso nos pacotes, drone para casamentos",
+    "recurringPromos": "ensaio na praia ao pôr do sol com 15% off no inverno"
+  },
+  {
+    "niche": "Pet Shop",
+    "businessName": "Mundo Pet Litoral",
+    "servicesText": "Banho porte pequeno R$45, Banho e tosa R$75, Tosa higiênica R$35, Hidratação de pelos R$30",
+    "tone": "descontraido",
+    "city": "Imbé",
+    "neighborhood": "Santa Terezinha",
+    "differentials": "táxi pet grátis no bairro, banho com produtos hipoalergênicos, câmera pra acompanhar o banho",
+    "recurringPromos": "5º banho grátis no plano mensal"
+  },
+  {
+    "niche": "Clínica",
+    "businessName": "Clínica Vida Plena",
+    "servicesText": "Consulta clínico geral R$180, Check-up completo R$450, Eletrocardiograma R$120, Consulta nutricionista R$150",
+    "tone": "profissional",
+    "city": "Osório",
+    "neighborhood": "Caravágio",
+    "differentials": "atendimento no mesmo dia, convênios regionais, equipe multidisciplinar",
+    "recurringPromos": "check-up empresarial com desconto progressivo"
+  }
+]
