@@ -16,7 +16,7 @@
 | Dia | Foco | Status |
 |-----|------|--------|
 | **1** (12/06) | Fechar o free tier real (7 dias + PDF marca d'água) + rebrand RitmoPost + domínio | ✅ |
-| **2-3** (13-14/06) | **Perfil do Negócio** — cadastro rico (serviços, preços, tom, bairro) injetado no prompt | ⏳ |
+| **2-3** (13-14/06) | **Perfil do Negócio** — cadastro rico (serviços, preços, tom, bairro) injetado no prompt | 🔍 código pronto na branch `feat/perfil-negocio` — falta migration + teste com banco |
 | **4-5** (15-16/06) | **WhatsApp delivery** — post do dia às 8h no zap, legenda pronta pra copiar (Evolution API) | ⏳ |
 | **6** (17/06) | Qualidade — rodar geração nos 10 nichos com perfis fictícios reais, refinar prompts, validar Zod | ⏳ |
 | **7** (18-19/06) | QA do fluxo completo + gravar Reels da demo + montar lista de 50 leads no Instagram | ⏳ |
@@ -254,7 +254,7 @@ Core loop: gerar → ver → baixar PDF → pagar.
 
 - [x] **Free tier real** — 7 dias visíveis + PDF marca d'água agressiva + cards bloqueados (sem vazar conteúdo) — *verificado em prod, 16/16 checks*
 - [x] **Rebrand RitmoPost** + domínio
-- [ ] **Perfil do Negócio (dias 2-3)** — tabela `business_profiles`, página `/perfil`, fluxo `/gerar` por perfil, prompt enriquecido, retrocompat com calendários antigos e `/admin/demo`
+- [ ] **Perfil do Negócio (dias 2-3)** — 🔍 **código completo na branch `feat/perfil-negocio`, aguardando migration + QA**: tabela `business_profiles`, página `/perfil` (CRUD), fluxo `/gerar` por perfil (com modo manual de fallback), prompt enriquecido (serviços/preços, tom, bairro, promoções), regenerar-dia herda o perfil, `/admin/demo` com campos de perfil do prospect, retrocompat total (calendários antigos com `profile_id` NULL). **Antes de mergear/deployar: rodar `npx drizzle-kit push` no Neon** (SQL para revisão em `drizzle/2026-06-12_business_profiles.sql`) — sem isso, qualquer geração quebra (INSERT cita coluna nova).
 - [ ] **WhatsApp delivery (dias 4-5)** — post do dia às 8h via Evolution API, legenda formatada pronta pra copiar (retenção: vira hábito diário)
 - [ ] **Qualidade (dia 6)** — rodar 10 nichos com perfis fictícios, refinar prompts, validar Zod em todos os casos
 - [ ] **QA + lançamento (dia 7)** — fluxo completo (cadastro → perfil → gerar → PDF → pagar → WhatsApp), Reels da demo, lista de 50 leads
@@ -402,4 +402,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-12 — Rebrand RitmoPost. Sprint de lançamento travado: build até 19/06, primeira DM 20/06. Free tier real entregue. Próximo: Perfil do Negócio (dias 2-3).*
+*Última atualização: 2026-06-13 (madrugada, Claude autônomo) — Perfil do Negócio implementado na branch `feat/perfil-negocio` (typecheck + build + smoke test ok). Pendente pra fechar dias 2-3: revisar SQL em `drizzle/`, rodar `npx drizzle-kit push`, testar fluxo com banco, mergear. Próximo: WhatsApp delivery (dias 4-5).*
