@@ -241,7 +241,7 @@ Core loop: gerar → ver → baixar PDF → pagar.
 - [x] Link público de compartilhamento (/c/[id])
 - [x] Email de boas-vindas via Resend
 - [x] Watermark no PDF + botão "Copiar pra WhatsApp"
-- [ ] Plano anual no Stripe (R$239/ano) — aguardando primeiros clientes
+- [x] Plano anual no Stripe (R$239/ano) — modal mensal/anual no upgrade, priceId resolvido server-side (com fallback de env). **Confirmar `STRIPE_PRICE_ID_YEARLY` na Vercel.**
 
 ### Fase 2 — 30 a 90 Dias ✅ CONCLUÍDO
 
@@ -259,8 +259,7 @@ Core loop: gerar → ver → baixar PDF → pagar.
 - [ ] **WhatsApp delivery (dias 4-5)** — 🟡 **lado do app pronto na branch, testado E2E com mock**: colunas `whatsapp_number`/`whatsapp_opt_in` no user (migration aplicada), card de opt-in no dashboard (só Pro), `/api/whatsapp-settings`, client Evolution (`src/lib/evolution.ts`), cron `/api/cron/whatsapp-daily` (8h BRT via `vercel.json`, protegido por `CRON_SECRET`, fuso América/São_Paulo, pega o calendário mais recente do mês). Mock da Evolution em `qa/mock-evolution.cjs` + seed em `qa/seed-whatsapp-test.cjs`. **Falta (decisão/ação do Willian): contratar VPS Hetzner, subir Evolution via Docker, conectar o número, setar EVOLUTION_* e CRON_SECRET reais na Vercel.**
 - [x] **Qualidade (dia 6)** — ✅ antecipado: 10 nichos gerados com perfis fictícios (Zod 10/10, promo citada 10/10, preços em 12-26 dias/30), 4 desvios sistemáticos achados e corrigidos no prompt (hashtags <6, legendas longas, poucos Reels, poucas refs locais), re-teste nos 5 piores nichos confirmou a melhora (legendas longas 23→2, hashtags <6 ~26→4 dias). Relatório completo: `qa/2026-06-13-qualidade-10-nichos.md`. Harness reutilizável em `qa/`.
 - [ ] **QA + lançamento (dia 7)** — fluxo completo (cadastro → perfil → gerar → PDF → pagar → WhatsApp), Reels da demo, lista de 50 leads
-- [ ] Sequência de emails D+3, D+7, D+20, D+28
-- [ ] Notificação "novo mês chegando" no D+25
+- [x] **Sequência de emails D+3, D+7, D+20, D+28 + notificação D+25** — `src/lib/email.ts` (templates + layout compartilhado, welcome refatorado pra usar), cron `/api/cron/retention-emails` (12h UTC via `vercel.json`, `CRON_SECRET`), coluna `user.sent_emails` (migration aplicada) anti-reenvio, janela [dia, dia+2] que evita disparo retroativo pra cadastros antigos. Testado com dry-run (7 idades semeadas → marcos certos, dedupe e auth ok). **Entrega real depende do domínio verificado no Resend** (sandbox só envia pro dono da conta).
 
 ### Fase 3 — 90 a 180 Dias
 
