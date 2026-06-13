@@ -20,6 +20,9 @@ export const user = pgTable("user", {
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   planExpiresAt: timestamp("plan_expires_at"),
+  // WhatsApp delivery (Pro): número em formato internacional (5551999998888) + opt-in explícito.
+  whatsappNumber: text("whatsapp_number"),
+  whatsappOptIn: boolean("whatsapp_opt_in").notNull().default(false),
 });
 
 export const session = pgTable("session", {
