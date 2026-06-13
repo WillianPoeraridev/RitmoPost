@@ -75,7 +75,7 @@ export function GerarForm({
       const checkoutRes = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY }),
+        body: JSON.stringify({ plan: "monthly" }),
       });
       const { url } = await checkoutRes.json();
       window.location.href = url;

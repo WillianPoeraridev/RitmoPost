@@ -23,6 +23,8 @@ export const user = pgTable("user", {
   // WhatsApp delivery (Pro): número em formato internacional (5551999998888) + opt-in explícito.
   whatsappNumber: text("whatsapp_number"),
   whatsappOptIn: boolean("whatsapp_opt_in").notNull().default(false),
+  // Chaves dos e-mails de retenção já enviados (ex: ["d3","d7"]) — evita reenvio.
+  sentEmails: jsonb("sent_emails").$type<string[]>().notNull().default([]),
 });
 
 export const session = pgTable("session", {

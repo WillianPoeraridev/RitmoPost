@@ -4,8 +4,11 @@ import { getStripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { z } from "zod";
 
+// O plano (não o priceId) vem do cliente; o servidor resolve o price a partir
+// de env — assim os IDs de preço não ficam expostos e ninguém forja o checkout.
+// Default "monthly" mantém compatível chamadas antigas que não mandavam plano.
 const bodySchema = z.object({
-  priceId: z.string(),
+  plan: z.enum(["monthly", "yearly"]).default("monthly"),
 });
 
 export async function POST(req: NextRequest) {
@@ -14,17 +17,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const parsed = bodySchema.safeParse(await req.json());
+  const parsed = bodySchema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+
+  // Fallback entre as duas nomenclaturas de env (a antiga em prod usava NEXT_PUBLIC_*),
+  // pra não quebrar o checkout mensal independente de como a Vercel está configurada.
+  const priceId =
+    parsed.data.plan === "yearly"
+      ? process.env.STRIPE_PRICE_ID_YEARLY ?? process.env.NEXT_PUBLIC_STRIPE_PRICE_YEARLY
+      : process.env.STRIPE_PRICE_ID_MONTHLY ?? process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY;
+
+  if (!priceId) {
+    return NextResponse.json({ error: "price_not_configured" }, { status: 500 });
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_URL!;
 
   const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "subscription",
-    line_items: [{ price: parsed.data.priceId, quantity: 1 }],
-    metadata: { userId: session.user.id },
+    line_items: [{ price: priceId, quantity: 1 }],
+    metadata: { userId: session.user.id, plan: parsed.data.plan },
     customer_email: session.user.email,
     success_url: `${baseUrl}/dashboard?success=true`,
     cancel_url: `${baseUrl}/dashboard?canceled=true`,
