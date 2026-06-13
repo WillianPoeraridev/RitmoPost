@@ -94,6 +94,12 @@ export default async function DashboardPage({
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/perfil"
+              className="text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 px-3 py-2 rounded-lg transition-colors"
+            >
+              Perfis do negócio
+            </Link>
             {calendars.length > 0 && (
               <Link
                 href={agencyMode ? "/dashboard" : "/dashboard?view=agencia"}

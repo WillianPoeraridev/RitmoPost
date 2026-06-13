@@ -1,5 +1,47 @@
 import { z } from "zod";
-import type { CalendarDay } from "./schema";
+import type { CalendarDay, BusinessService, BusinessTone } from "./schema";
+
+// Subconjunto do perfil do negócio usado para enriquecer o prompt.
+// Opcional em todas as gerações: sem perfil, o prompt continua igual ao de antes.
+export type ProfileContext = {
+  services?: BusinessService[];
+  tone?: BusinessTone;
+  differentials?: string;
+  city?: string;
+  neighborhood?: string;
+  recurringPromos?: string | null;
+};
+
+const TONE_LABELS: Record<BusinessTone, string> = {
+  descontraido: "descontraido e proximo, como uma conversa com cliente fiel",
+  profissional: "profissional e confiavel, sem ser engessado",
+  premium: "sofisticado e exclusivo, transmitindo alto padrao",
+};
+
+function buildProfileBlock(profile?: ProfileContext): string {
+  if (!profile) return "";
+  const lines: string[] = [];
+  if (profile.services?.length) {
+    const services = profile.services
+      .map((s) => (s.price ? `${s.name} (${s.price})` : s.name))
+      .join(", ");
+    lines.push(`- Servicos e precos reais: ${services}`);
+  }
+  if (profile.tone) lines.push(`- Tom de voz: ${TONE_LABELS[profile.tone]}`);
+  if (profile.differentials) lines.push(`- Diferenciais: ${profile.differentials}`);
+  const location = [profile.neighborhood, profile.city].filter(Boolean).join(", ");
+  if (location) lines.push(`- Localizacao: ${location}`);
+  if (profile.recurringPromos) lines.push(`- Promocoes recorrentes: ${profile.recurringPromos}`);
+  if (!lines.length) return "";
+  return `\nPerfil do negocio (use estes dados reais nos posts):\n${lines.join("\n")}\n`;
+}
+
+function profileRules(profile?: ProfileContext): string {
+  if (!profile || !buildProfileBlock(profile)) return "";
+  return `\n- Cite servicos e precos REAIS do perfil em varios posts (CTAs com preco convertem mais)
+- Faca referencias locais (bairro/cidade) quando fizer sentido — gera identificacao
+- Escreva TODAS as legendas no tom de voz informado no perfil`;
+}
 
 const MONTH_NAMES = [
   "",
@@ -118,14 +160,14 @@ export async function generateSingleDay(
   businessName: string,
   month: number,
   year: number,
-  day: number
+  day: number,
+  profile?: ProfileContext
 ): Promise<CalendarDay> {
   const monthName = MONTH_NAMES[month];
   const nicheContext = getNicheContext(niche);
 
   const prompt = `Voce e um especialista em marketing de conteudo para Instagram no Brasil, nicho "${niche}".
-${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}
-
+${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}${buildProfileBlock(profile)}
 Crie 1 post para o Dia ${day} de ${monthName}/${year} para:
 Negocio: ${businessName}
 Nicho: ${niche}
@@ -135,7 +177,7 @@ Regras:
 - Post ESPECIFICO para o nicho, nunca generico
 - Legenda em portugues brasileiro informal, sem cliches, maximo 3 frases
 - Hashtags: 6-8, mix de genericas e de nicho
-- Hook deve parar o scroll em 2 segundos
+- Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
 {"day":${day},"type":"Reels","theme":"tema especifico","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}`;
@@ -148,15 +190,15 @@ export async function generateCalendar(
   niche: string,
   businessName: string,
   month: number,
-  year: number
+  year: number,
+  profile?: ProfileContext
 ): Promise<CalendarDay[]> {
   const monthName = MONTH_NAMES[month];
   const holidays = HOLIDAYS[month]?.join(", ") ?? "nenhuma data comemorativa relevante";
   const nicheContext = getNicheContext(niche);
 
   const prompt = `Voce e um especialista em marketing de conteudo para Instagram no Brasil, com profundo conhecimento do segmento "${niche}".
-${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}
-
+${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}${buildProfileBlock(profile)}
 Crie um calendario de conteudo de 30 dias para ${monthName}/${year} para:
 Negocio: ${businessName}
 Nicho: ${niche}
@@ -167,7 +209,7 @@ Regras obrigatorias:
 - Cada post deve ser ESPECIFICO para o nicho - nunca generico
 - Legendas em portugues brasileiro informal, sem cliches, maximo 3 frases
 - Hashtags: 6-8 por post, mix de genericas e de nicho
-- Hook deve parar o scroll em 2 segundos
+- Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
 Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
 [{"day":1,"type":"Reels","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}]`;

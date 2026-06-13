@@ -62,11 +62,37 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
+export const businessProfile = pgTable("business_profiles", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  businessName: text("business_name").notNull(),
+  niche: text("niche").notNull(),
+  services: jsonb("services").$type<BusinessService[]>().notNull().default([]),
+  tone: text("tone").$type<BusinessTone>().notNull().default("descontraido"),
+  differentials: text("differentials").notNull().default(""),
+  city: text("city").notNull().default(""),
+  neighborhood: text("neighborhood").notNull().default(""),
+  recurringPromos: text("recurring_promos"),
+  instagramHandle: text("instagram_handle"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export type BusinessService = { name: string; price?: string };
+export type BusinessTone = "descontraido" | "profissional" | "premium";
+export type BusinessProfileRow = typeof businessProfile.$inferSelect;
+
 export const calendar = pgTable("calendar", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  // Nullable: calendários antigos (pré-perfil) continuam abrindo normalmente.
+  profileId: text("profile_id").references(() => businessProfile.id, {
+    onDelete: "set null",
+  }),
   niche: text("niche").notNull(),
   businessName: text("business_name").notNull(),
   month: integer("month").notNull(),

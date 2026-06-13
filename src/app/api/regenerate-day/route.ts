@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { calendar } from "@/lib/schema";
-import { generateSingleDay } from "@/lib/claude";
+import { calendar, businessProfile } from "@/lib/schema";
+import { generateSingleDay, type ProfileContext } from "@/lib/claude";
 import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -30,7 +30,35 @@ export async function POST(req: NextRequest) {
 
   if (!cal) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const newDay = await generateSingleDay(cal.niche, cal.businessName, cal.month, cal.year, day);
+  // Reaproveita o perfil que gerou o calendário (se ainda existir) para
+  // manter o dia regenerado consistente com o resto do mês.
+  let profileContext: ProfileContext | undefined;
+  if (cal.profileId) {
+    const [profile] = await db
+      .select()
+      .from(businessProfile)
+      .where(eq(businessProfile.id, cal.profileId))
+      .limit(1);
+    if (profile) {
+      profileContext = {
+        services: profile.services,
+        tone: profile.tone,
+        differentials: profile.differentials,
+        city: profile.city,
+        neighborhood: profile.neighborhood,
+        recurringPromos: profile.recurringPromos,
+      };
+    }
+  }
+
+  const newDay = await generateSingleDay(
+    cal.niche,
+    cal.businessName,
+    cal.month,
+    cal.year,
+    day,
+    profileContext
+  );
 
   const updatedContent = (cal.content as CalendarDay[]).map((d) =>
     d.day === day ? newDay : d
