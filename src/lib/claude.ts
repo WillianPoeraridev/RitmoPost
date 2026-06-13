@@ -96,7 +96,11 @@ function getNicheContext(niche: string): string {
   return partial ? NICHE_TEMPLATES[partial] : "";
 }
 
-async function callOpenRouter(prompt: string, maxTokens: number): Promise<string> {
+async function callOpenRouter(
+  prompt: string,
+  maxTokens: number,
+  temperature?: number
+): Promise<string> {
   if (!process.env.OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY is not set");
   }
@@ -110,6 +114,7 @@ async function callOpenRouter(prompt: string, maxTokens: number): Promise<string
     body: JSON.stringify({
       model: process.env.OPENROUTER_MODEL ?? "anthropic/claude-haiku-4-5",
       max_tokens: maxTokens,
+      ...(temperature !== undefined ? { temperature } : {}),
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -133,16 +138,41 @@ async function callOpenRouter(prompt: string, maxTokens: number): Promise<string
   return text.startsWith("```") ? text.replace(/```(?:json)?\n?/g, "").trim() : text;
 }
 
-// JSON.parse with a clear error message that includes a snippet of the raw text,
-// so failures (truncation, stray markdown) are diagnosable instead of opaque.
-function parseJsonOrThrow(text: string, context: string): unknown {
+// Tenta consertar malformações comuns que o modelo emite (~10% das gerações com
+// haiku): prosa antes/depois do JSON, vírgula sobrando antes de ] ou }, e vírgula
+// FALTANDO entre dois objetos adjacentes — a causa do erro "Expected ',' or ']'".
+function salvageJson(text: string, arrayRoot: boolean): string {
+  let t = text.trim();
+  // Recorta do primeiro delimitador de abertura até o último de fechamento,
+  // descartando qualquer texto que o modelo tenha colocado em volta.
+  const open = arrayRoot ? "[" : "{";
+  const close = arrayRoot ? "]" : "}";
+  const start = t.indexOf(open);
+  const end = t.lastIndexOf(close);
+  if (start !== -1 && end !== -1 && end > start) {
+    t = t.slice(start, end + 1);
+  }
+  // Vírgula faltando entre objetos: `} {` ou `}\n{` → `},{`
+  t = t.replace(/\}(\s*)\{/g, "},$1{");
+  // Vírgula sobrando antes do fechamento: `, ]` → `]`
+  t = t.replace(/,(\s*[\]}])/g, "$1");
+  return t;
+}
+
+// JSON.parse tolerante: tenta o texto cru e, se falhar, tenta a versão "salvada".
+// Erro inclui um trecho do texto para diagnóstico (truncamento, markdown solto).
+function parseJsonOrThrow(text: string, context: string, arrayRoot = true): unknown {
   try {
     return JSON.parse(text);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    throw new Error(
-      `Failed to parse ${context} JSON (${msg}). Length=${text.length}. Tail: ${text.slice(-200)}`
-    );
+  } catch {
+    try {
+      return JSON.parse(salvageJson(text, arrayRoot));
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      throw new Error(
+        `Failed to parse ${context} JSON (${msg}). Length=${text.length}. Tail: ${text.slice(-200)}`
+      );
+    }
   }
 }
 
@@ -179,11 +209,20 @@ Regras:
 - Hashtags: EXATAMENTE de 6 a 8 — nunca menos que 6 — mix de genericas e de nicho
 - Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
-Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
+Retorne SOMENTE um objeto JSON valido (sem markdown, sem texto adicional). Use aspas duplas e escape aspas dentro dos textos. Formato:
 {"day":${day},"type":"Reels","theme":"tema especifico","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}`;
 
-  const text = await callOpenRouter(prompt, 700);
-  return calendarDaySchema.parse(parseJsonOrThrow(text, "single day")) as CalendarDay;
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const text = await callOpenRouter(prompt, 700, attempt === 1 ? undefined : 0.4);
+      return calendarDaySchema.parse(parseJsonOrThrow(text, "single day", false)) as CalendarDay;
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[generateSingleDay] tentativa ${attempt}/3 falhou:`, err instanceof Error ? err.message : err);
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
 export async function generateCalendar(
@@ -211,12 +250,23 @@ Regras obrigatorias:
 - Hashtags: EXATAMENTE de 6 a 8 por post — nunca menos que 6 — mix de genericas e de nicho
 - Hook deve parar o scroll em 2 segundos${profileRules(profile)}
 
-Retorne SOMENTE este JSON (sem markdown, sem texto adicional):
+Retorne SOMENTE um array JSON valido (sem markdown, sem texto adicional). Use aspas duplas e escape aspas dentro dos textos. Formato de cada item:
 [{"day":1,"type":"Reels","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}]`;
 
-  const text = await callOpenRouter(prompt, 8000);
-  const parsed = parseJsonOrThrow(text, "calendar");
-  return z.array(calendarDaySchema).parse(parsed) as CalendarDay[];
+  // Haiku emite JSON inválido em ~10% das gerações. Salvamos o que dá e, se ainda
+  // assim falhar, regeneramos — uma tentativa nova quase sempre sai válida.
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const text = await callOpenRouter(prompt, 8000, attempt === 1 ? undefined : 0.4);
+      const parsed = parseJsonOrThrow(text, "calendar", true);
+      return z.array(calendarDaySchema).parse(parsed) as CalendarDay[];
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[generateCalendar] tentativa ${attempt}/3 falhou:`, err instanceof Error ? err.message : err);
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
 export async function generateReelsScript(

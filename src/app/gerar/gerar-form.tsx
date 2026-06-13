@@ -243,7 +243,7 @@ export function GerarForm({
 
       {loading && (
         <p className="text-center text-slate-500 text-xs">
-          Isso leva cerca de 10 segundos ✨
+          A IA escreve os 30 dias um a um — leva uns 30 a 40 segundos ✨
         </p>
       )}
     </form>
