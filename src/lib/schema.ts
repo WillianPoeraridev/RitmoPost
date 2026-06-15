@@ -106,11 +106,28 @@ export const calendar = pgTable("calendar", {
   createdAt: timestamp("created_at").notNull(),
 });
 
+// Função estratégica do post no método MoneyBranding (ver ROADMAP / ref):
+// atracao = para o scroll de quem não te conhece (tese/posicionamento, traz seguidor);
+// conexao = bastidor/relato que gera confiança em quem já segue;
+// conversao = convite leve pra agir (agendar/pedir/aproveitar promo).
+export type ContentPillar = "atracao" | "conexao" | "conversao";
+
+export const PILLAR_LABELS: Record<ContentPillar, string> = {
+  atracao: "Atração",
+  conexao: "Conexão",
+  conversao: "Conversão",
+};
+
 export type CalendarDay = {
   day: number;
   type: "Reels" | "Carrossel" | "Story" | "Feed";
+  // Opcionais: calendários gerados antes do método não têm esses campos e
+  // continuam abrindo/renderizando normalmente (jsonb é schemaless — sem migration).
+  pillar?: ContentPillar;
   theme: string;
   hook: string;
   caption: string;
   hashtags: string[];
+  // Camada diária de Conexão: uma ideia curta de Story pra aquele dia.
+  story?: string;
 };

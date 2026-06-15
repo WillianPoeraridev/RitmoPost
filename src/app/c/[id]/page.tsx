@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { CalendarDay } from "@/lib/schema";
+import { PILLAR_LABELS } from "@/lib/schema";
 
 const MONTH_NAMES = [
   "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -16,6 +17,12 @@ const TYPE_COLORS: Record<string, string> = {
   Carrossel: "bg-sky-600",
   Story: "bg-amber-500",
   Feed: "bg-emerald-600",
+};
+
+const PILLAR_COLORS: Record<string, string> = {
+  atracao: "bg-rose-600",
+  conexao: "bg-cyan-600",
+  conversao: "bg-green-600",
 };
 
 export default async function PublicCalendarPage({
@@ -66,13 +73,36 @@ export default async function PublicCalendarPage({
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-3 mb-6">
+        <div className="flex flex-wrap gap-3 mb-4">
           {Object.entries(TYPE_COLORS).map(([type, color]) => (
             <span key={type} className={`text-xs font-medium px-2 py-1 rounded-full text-white ${color}`}>
               {type}
             </span>
           ))}
         </div>
+
+        {/* O método por trás do calendário — o que diferencia de "30 ideias soltas" */}
+        {days.some((d) => d.pillar) && (
+          <div className="mb-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+            <p className="text-xs text-slate-400 mb-3">
+              Cada post tem uma <span className="text-slate-200 font-medium">função estratégica</span> — um plano que constrói a marca e traz cliente sem correr atrás:
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              {([
+                { color: "bg-rose-600", label: "Atração", desc: "para o scroll de quem não te conhece" },
+                { color: "bg-cyan-600", label: "Conexão", desc: "bastidor que faz quem segue confiar" },
+                { color: "bg-green-600", label: "Conversão", desc: "convite leve pra agir, sem desespero" },
+              ] as const).map((p) => (
+                <div key={p.label} className="flex items-start gap-2 flex-1">
+                  <span className={`mt-0.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${p.color} shrink-0`}>
+                    {p.label}
+                  </span>
+                  <span className="text-xs text-slate-500 leading-snug">{p.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {days.map((day) => (
@@ -81,9 +111,16 @@ export default async function PublicCalendarPage({
               className="bg-slate-900 border border-slate-800 hover:border-violet-700/30 transition-colors rounded-xl p-3 group"
             >
               <p className="text-xs text-slate-600 mb-2 font-medium">Dia {day.day}</p>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[day.type] ?? "bg-slate-600"}`}>
-                {day.type}
-              </span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[day.type] ?? "bg-slate-600"}`}>
+                  {day.type}
+                </span>
+                {day.pillar && (
+                  <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${PILLAR_COLORS[day.pillar]}`}>
+                    {PILLAR_LABELS[day.pillar]}
+                  </span>
+                )}
+              </div>
               <p className="text-sm font-medium text-slate-200 mt-2 leading-tight">
                 {day.theme}
               </p>
@@ -97,6 +134,11 @@ export default async function PublicCalendarPage({
                 <p className="text-xs text-slate-600 mt-1 leading-snug">
                   {day.hashtags.slice(0, 4).join(" ")}
                 </p>
+                {day.story && (
+                  <p className="text-xs text-amber-300/90 mt-2 leading-snug">
+                    <span className="font-semibold">📲 Story:</span> {day.story}
+                  </p>
+                )}
               </div>
             </div>
           ))}

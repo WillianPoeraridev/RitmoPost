@@ -1,5 +1,21 @@
 import { z } from "zod";
-import type { CalendarDay, BusinessService, BusinessTone } from "./schema";
+import type { CalendarDay, BusinessService, BusinessTone, ContentPillar } from "./schema";
+
+// O haiku às vezes devolve o pilar com acento, maiúscula ou usando o sinônimo do
+// pilar ("atenção", "confiança"). Normalizamos pra nunca derrubar a geração inteira
+// por causa de uma variação de texto — pilar ausente/desconhecido vira undefined.
+function normalizePillar(raw?: string): ContentPillar | undefined {
+  if (!raw) return undefined;
+  const k = raw
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim();
+  if (k.startsWith("atra") || k.includes("aten")) return "atracao";
+  if (k.startsWith("conex") || k.includes("confian")) return "conexao";
+  if (k.startsWith("convers") || k.includes("venda")) return "conversao";
+  return undefined;
+}
 
 // Subconjunto do perfil do negócio usado para enriquecer o prompt.
 // Opcional em todas as gerações: sem perfil, o prompt continua igual ao de antes.
@@ -179,10 +195,18 @@ function parseJsonOrThrow(text: string, context: string, arrayRoot = true): unkn
 const calendarDaySchema = z.object({
   day: z.number(),
   type: z.enum(["Reels", "Carrossel", "Story", "Feed"]),
+  // Pilar e story são opcionais e tolerantes: se o modelo omitir ou variar o texto,
+  // o dia continua válido (geração robusta > campo perfeito). normalizePillar mapeia
+  // variações ("Atenção", "Confiança", "Conversão") pro enum canônico.
+  pillar: z
+    .string()
+    .optional()
+    .transform(normalizePillar),
   theme: z.string(),
   hook: z.string(),
   caption: z.string(),
   hashtags: z.array(z.string()),
+  story: z.string().optional(),
 });
 
 export async function generateSingleDay(
@@ -202,15 +226,21 @@ Crie 1 post para o Dia ${day} de ${monthName}/${year} para:
 Negocio: ${businessName}
 Nicho: ${niche}
 
+Cada post tem uma funcao estrategica (campo "pillar") — escolha a mais adequada pro dia:
+- "atracao": opiniao/posicionamento do dono ou antes/depois que impressiona; traz seguidor novo (nunca "5 dicas" generico)
+- "conexao": bastidor, rotina, historia real de cliente; gera confianca (nao e aula)
+- "conversao": convite leve pra agir (agendar/pedir/aproveitar promo), tom de "a porta esta aberta"
+
 Regras:
 - Escolha o formato mais adequado para o dia (Reels, Carrossel, Story ou Feed)
 - Post ESPECIFICO para o nicho, nunca generico
 - Legenda em portugues brasileiro informal, sem cliches, NO MAXIMO 3 frases curtas
 - Hashtags: EXATAMENTE de 6 a 8 — nunca menos que 6 — mix de genericas e de nicho
-- Hook deve parar o scroll em 2 segundos${profileRules(profile)}
+- Hook deve parar o scroll em 2 segundos
+- "story": 1 frase curta do que postar no Story do dia${profileRules(profile)}
 
 Retorne SOMENTE um objeto JSON valido (sem markdown, sem texto adicional). Use aspas duplas e escape aspas dentro dos textos. Formato:
-{"day":${day},"type":"Reels","theme":"tema especifico","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}`;
+{"day":${day},"type":"Reels","pillar":"atracao","theme":"tema especifico","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"],"story":"ideia de story do dia"}`;
 
   let lastErr: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -236,29 +266,41 @@ export async function generateCalendar(
   const holidays = HOLIDAYS[month]?.join(", ") ?? "nenhuma data comemorativa relevante";
   const nicheContext = getNicheContext(niche);
 
-  const prompt = `Voce e um especialista em marketing de conteudo para Instagram no Brasil, com profundo conhecimento do segmento "${niche}".
+  const prompt = `Voce e um estrategista de conteudo para Instagram no Brasil, especialista no segmento "${niche}". Voce NAO entrega "ideias de post soltas" — voce monta um PLANO de 30 dias que constroi a marca do negocio e faz o cliente chegar pronto pra comprar, sem o dono precisar correr atras de ninguem.
 ${nicheContext ? `\nContexto do nicho: ${nicheContext}` : ""}${buildProfileBlock(profile)}
-Crie um calendario de conteudo de 30 dias para ${monthName}/${year} para:
+Crie um calendario ESTRATEGICO de 30 dias para ${monthName}/${year} para:
 Negocio: ${businessName}
 Nicho: ${niche}
 
-Regras obrigatorias:
-- Distribuicao EXATA dos formatos no mes: 12 Reels, 9 Carrossel, 6 Feed, 3 Story
+== METODO: cada post tem UMA funcao (campo "pillar") ==
+1. "atracao" — para o scroll de quem ainda NAO conhece o negocio e traz seguidor novo. E OPINIAO/POSICIONAMENTO do dono que contraria o senso comum do nicho, OU um antes/depois/resultado que impressiona. NUNCA "5 dicas" generico. Quem le ou concorda na hora ou discorda e fica curioso — os dois viram seguidor.
+2. "conexao" — faz quem ja segue CONFIAR. E bastidor, rotina, historia real de cliente, o que rolou no dia a dia, os valores do negocio. NAO e aula/tutorial. Mostra que o negocio e real e entende o problema do cliente na pratica.
+3. "conversao" — CONVITE leve pra agir (agendar, pedir, aproveitar a promo). Sem desespero, sem "ULTIMA CHANCE". Tom de "a porta esta aberta". So funciona porque atracao e conexao ja construiram a confianca.
+
+== DISTRIBUICAO OBRIGATORIA ==
+- Pilares no mes: ~12 dias "atracao", ~12 dias "conexao", ~6 dias "conversao"
+- NUNCA dois dias seguidos de "conversao". Ancore "conversao" nas datas comemorativas e nas promocoes do perfil.
+- Os 5 primeiros dias do mes: somente "atracao" e "conexao" (primeiro constroi audiencia e confianca, depois convida)
+- Formatos no mes: 12 Reels, 9 Carrossel, 6 Feed, 3 Story
 - Datas comemorativas do mes: ${holidays} — crie posts tematicos para elas
-- Cada post deve ser ESPECIFICO para o nicho - nunca generico
+- STORY DIARIO: alem do post, TODO dia tem o campo "story" com UMA ideia curta de Story (bastidor, enquete, pergunta, making-of) — e a camada diaria que mantem a audiencia aquecida
+
+== REGRAS DE ESCRITA ==
+- Cada post ESPECIFICO para o nicho - nunca generico
 - Legendas em portugues brasileiro informal, sem cliches, NO MAXIMO 3 frases curtas (conte as frases antes de finalizar)
 - Hashtags: EXATAMENTE de 6 a 8 por post — nunca menos que 6 — mix de genericas e de nicho
-- Hook deve parar o scroll em 2 segundos${profileRules(profile)}
+- Hook deve parar o scroll em 2 segundos
+- "story": 1 frase curta e direta do que postar no Story daquele dia${profileRules(profile)}
 
 Retorne SOMENTE um array JSON valido (sem markdown, sem texto adicional). Use aspas duplas e escape aspas dentro dos textos. Formato de cada item:
-[{"day":1,"type":"Reels","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"]}]`;
+[{"day":1,"type":"Reels","pillar":"atracao","theme":"tema especifico do post","hook":"primeira frase que para o scroll","caption":"legenda completa com CTA","hashtags":["#tag1","#tag2"],"story":"ideia de story do dia"}]`;
 
   // Haiku emite JSON inválido em ~10% das gerações. Salvamos o que dá e, se ainda
   // assim falhar, regeneramos — uma tentativa nova quase sempre sai válida.
   let lastErr: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const text = await callOpenRouter(prompt, 8000, attempt === 1 ? undefined : 0.4);
+      const text = await callOpenRouter(prompt, 10000, attempt === 1 ? undefined : 0.4);
       const parsed = parseJsonOrThrow(text, "calendar", true);
       return z.array(calendarDaySchema).parse(parsed) as CalendarDay[];
     } catch (err) {

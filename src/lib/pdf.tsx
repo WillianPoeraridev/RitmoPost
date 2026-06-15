@@ -30,6 +30,18 @@ const TYPE_COLORS: Record<string, string> = {
   Feed: "#10b981",
 };
 
+const PILLAR_COLORS: Record<string, string> = {
+  atracao: "#e11d48",
+  conexao: "#0891b2",
+  conversao: "#16a34a",
+};
+
+const PILLAR_LABELS_PDF: Record<string, string> = {
+  atracao: "ATRACAO",
+  conexao: "CONEXAO",
+  conversao: "CONVERSAO",
+};
+
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
@@ -82,15 +94,48 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     fontFamily: "Helvetica-Bold",
   },
+  badgeRow: {
+    flexDirection: "row",
+    gap: 3,
+    marginBottom: 4,
+    flexWrap: "wrap",
+  },
   typeBadge: {
     fontSize: 6,
     fontFamily: "Helvetica-Bold",
     paddingHorizontal: 3,
     paddingVertical: 1,
     borderRadius: 3,
-    marginBottom: 4,
     color: "#ffffff",
     alignSelf: "flex-start",
+  },
+  pillarBadge: {
+    fontSize: 5,
+    fontFamily: "Helvetica-Bold",
+    paddingHorizontal: 3,
+    paddingVertical: 1,
+    borderRadius: 3,
+    color: "#ffffff",
+    alignSelf: "flex-start",
+  },
+  methodLegend: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+    borderBottomStyle: "solid",
+  },
+  methodItem: {
+    fontSize: 7,
+    color: "#4b5563",
+  },
+  story: {
+    fontSize: 6,
+    color: "#b45309",
+    marginTop: 3,
+    lineHeight: 1.3,
   },
   theme: {
     fontSize: 7,
@@ -191,23 +236,48 @@ export function CalendarPdf({
           </View>
         )}
 
+        {/* Legenda do método: comunica que o calendário é estratégico, não ideia solta */}
+        {days.some((d) => d.pillar) && (
+          <View style={styles.methodLegend}>
+            <Text style={[styles.methodItem, { color: PILLAR_COLORS.atracao, fontFamily: "Helvetica-Bold" }]}>
+              ATRACAO = traz seguidor
+            </Text>
+            <Text style={[styles.methodItem, { color: PILLAR_COLORS.conexao, fontFamily: "Helvetica-Bold" }]}>
+              CONEXAO = gera confianca
+            </Text>
+            <Text style={[styles.methodItem, { color: PILLAR_COLORS.conversao, fontFamily: "Helvetica-Bold" }]}>
+              CONVERSAO = convida a comprar
+            </Text>
+          </View>
+        )}
+
         <View style={styles.grid}>
           {days.map((day) => (
             <View key={day.day} style={styles.card}>
               <Text style={styles.dayNum}>Dia {day.day}</Text>
-              <View
-                style={[
-                  styles.typeBadge,
-                  {
-                    backgroundColor:
-                      TYPE_COLORS[day.type] ?? "#6b7280",
-                  },
-                ]}
-              >
-                <Text>{day.type}</Text>
+              <View style={styles.badgeRow}>
+                <View
+                  style={[
+                    styles.typeBadge,
+                    { backgroundColor: TYPE_COLORS[day.type] ?? "#6b7280" },
+                  ]}
+                >
+                  <Text>{day.type}</Text>
+                </View>
+                {day.pillar && PILLAR_COLORS[day.pillar] && (
+                  <View
+                    style={[
+                      styles.pillarBadge,
+                      { backgroundColor: PILLAR_COLORS[day.pillar] },
+                    ]}
+                  >
+                    <Text>{PILLAR_LABELS_PDF[day.pillar]}</Text>
+                  </View>
+                )}
               </View>
               <Text style={styles.theme}>{day.theme}</Text>
               <Text style={styles.hook}>{day.hook}</Text>
+              {day.story && <Text style={styles.story}>Story: {day.story}</Text>}
             </View>
           ))}
         </View>

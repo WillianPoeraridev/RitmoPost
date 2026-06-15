@@ -9,7 +9,7 @@ export function CopyButton({ days }: { days: CalendarDay[] }) {
     const text = days
       .map(
         (d) =>
-          `📅 Dia ${d.day} — ${d.type}\n📌 ${d.theme}\n💬 ${d.caption}\n${d.hashtags.join(" ")}`
+          `📅 Dia ${d.day} — ${d.type}\n📌 ${d.theme}\n💬 ${d.caption}\n${d.hashtags.join(" ")}${d.story ? `\n📲 Story: ${d.story}` : ""}`
       )
       .join("\n\n---\n\n");
 

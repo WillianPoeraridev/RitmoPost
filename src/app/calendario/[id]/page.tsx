@@ -102,8 +102,8 @@ export default async function CalendarioPage({
           </div>
         )}
 
-        {/* Legenda */}
-        <div className="flex flex-wrap gap-3 mb-6">
+        {/* Legenda de formatos */}
+        <div className="flex flex-wrap gap-3 mb-4">
           {(["Reels", "Carrossel", "Story", "Feed"] as const).map((type) => {
             const colors: Record<string, string> = { Reels: "bg-violet-600", Carrossel: "bg-sky-600", Story: "bg-amber-500", Feed: "bg-emerald-600" };
             return (
@@ -112,6 +112,27 @@ export default async function CalendarioPage({
               </span>
             );
           })}
+        </div>
+
+        {/* Legenda de estratégia — o método por trás do calendário */}
+        <div className="mb-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <p className="text-xs text-slate-400 mb-3">
+            Cada post tem uma <span className="text-slate-200 font-medium">função estratégica</span> — não é ideia solta, é um plano que constrói sua marca e traz cliente sem você correr atrás:
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {([
+              { key: "atracao", label: "Atração", color: "bg-rose-600", desc: "para o scroll de quem não te conhece e traz seguidor novo" },
+              { key: "conexao", label: "Conexão", color: "bg-cyan-600", desc: "bastidor e histórias que fazem quem te segue confiar" },
+              { key: "conversao", label: "Conversão", color: "bg-green-600", desc: "convite leve pra agir, sem desespero" },
+            ] as const).map((p) => (
+              <div key={p.key} className="flex items-start gap-2 flex-1">
+                <span className={`mt-0.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${p.color} shrink-0`}>
+                  {p.label}
+                </span>
+                <span className="text-xs text-slate-500 leading-snug">{p.desc}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Grid */}

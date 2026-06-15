@@ -1,4 +1,5 @@
 import type { CalendarDay } from "./schema";
+import { PILLAR_LABELS } from "./schema";
 
 /**
  * Client mínimo da Evolution API (WhatsApp não-oficial via Baileys).
@@ -39,10 +40,11 @@ export function formatDailyPostMessage(
   businessName: string,
   day: CalendarDay
 ): string {
+  const pillarTag = day.pillar ? ` · ${PILLAR_LABELS[day.pillar]}` : "";
   return [
     `☀️ Bom dia! Seu post de hoje no RitmoPost:`,
     ``,
-    `📅 *Dia ${day.day} — ${day.type}* (${businessName})`,
+    `📅 *Dia ${day.day} — ${day.type}${pillarTag}* (${businessName})`,
     `📌 ${day.theme}`,
     `🎣 ${day.hook}`,
     ``,
@@ -51,6 +53,9 @@ export function formatDailyPostMessage(
     `${day.caption}`,
     ``,
     `${day.hashtags.join(" ")}`,
+    ...(day.story
+      ? ["", `📲 *Story de hoje:* ${day.story}`]
+      : []),
     ``,
     `Posta e bora manter o ritmo! 💜`,
   ].join("\n");

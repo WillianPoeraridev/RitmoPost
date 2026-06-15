@@ -1,12 +1,20 @@
 "use client";
 import { useState } from "react";
-import type { CalendarDay } from "@/lib/schema";
+import type { CalendarDay, ContentPillar } from "@/lib/schema";
+import { PILLAR_LABELS } from "@/lib/schema";
 
 const TYPE_COLORS: Record<string, string> = {
   Reels: "bg-violet-600",
   Carrossel: "bg-sky-600",
   Story: "bg-amber-500",
   Feed: "bg-emerald-600",
+};
+
+// Cor por função estratégica (método MoneyBranding). Distinta dos tipos de post.
+const PILLAR_COLORS: Record<ContentPillar, string> = {
+  atracao: "bg-rose-600",
+  conexao: "bg-cyan-600",
+  conversao: "bg-green-600",
 };
 
 export function DayCard({
@@ -78,9 +86,19 @@ export function DayCard({
         </button>
       </div>
 
-      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[current.type] ?? "bg-slate-600"}`}>
-        {current.type}
-      </span>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[current.type] ?? "bg-slate-600"}`}>
+          {current.type}
+        </span>
+        {current.pillar && (
+          <span
+            title="Função estratégica do post"
+            className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${PILLAR_COLORS[current.pillar]}`}
+          >
+            {PILLAR_LABELS[current.pillar]}
+          </span>
+        )}
+      </div>
       <p className="text-sm font-medium text-slate-200 mt-2 leading-tight">{current.theme}</p>
       <p className="text-xs text-slate-500 mt-1 italic leading-snug">{current.hook}</p>
 
@@ -91,6 +109,12 @@ export function DayCard({
         <p className="text-xs text-slate-600 mt-1 leading-snug">
           {current.hashtags.slice(0, 4).join(" ")}
         </p>
+
+        {current.story && (
+          <p className="text-xs text-amber-300/90 mt-2 leading-snug border-t border-slate-800 pt-2">
+            <span className="font-semibold">📲 Story de hoje:</span> {current.story}
+          </p>
+        )}
 
         {current.type === "Reels" && (
           <button
