@@ -66,14 +66,14 @@ export function DayCard({
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 hover:border-violet-700/30 transition-colors rounded-xl p-3 group">
+    <div className="bg-neutral-900 border border-neutral-800 hover:border-rose-700/30 transition-colors rounded-xl p-3 group">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs text-slate-600 font-medium">Dia {current.day}</p>
+        <p className="text-xs text-neutral-600 font-medium">Dia {current.day}</p>
         <button
           onClick={handleRegenerate}
           disabled={regenerating}
           title="Regenerar este dia"
-          className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-violet-400 disabled:opacity-30"
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-neutral-600 hover:text-rose-400 disabled:opacity-30"
         >
           <svg
             className={`w-3.5 h-3.5 ${regenerating ? "animate-spin" : ""}`}
@@ -87,7 +87,7 @@ export function DayCard({
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[current.type] ?? "bg-slate-600"}`}>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[current.type] ?? "bg-neutral-600"}`}>
           {current.type}
         </span>
         {current.pillar && (
@@ -99,19 +99,19 @@ export function DayCard({
           </span>
         )}
       </div>
-      <p className="text-sm font-medium text-slate-200 mt-2 leading-tight">{current.theme}</p>
-      <p className="text-xs text-slate-500 mt-1 italic leading-snug">{current.hook}</p>
+      <p className="text-sm font-medium text-neutral-200 mt-2 leading-tight">{current.theme}</p>
+      <p className="text-xs text-neutral-500 mt-1 italic leading-snug">{current.hook}</p>
 
       <div className="mt-2 hidden group-hover:block">
-        <p className="text-xs text-slate-400 leading-snug border-t border-slate-800 pt-2">
+        <p className="text-xs text-neutral-400 leading-snug border-t border-neutral-800 pt-2">
           {current.caption}
         </p>
-        <p className="text-xs text-slate-600 mt-1 leading-snug">
+        <p className="text-xs text-neutral-600 mt-1 leading-snug">
           {current.hashtags.slice(0, 4).join(" ")}
         </p>
 
         {current.story && (
-          <p className="text-xs text-amber-300/90 mt-2 leading-snug border-t border-slate-800 pt-2">
+          <p className="text-xs text-amber-300/90 mt-2 leading-snug border-t border-neutral-800 pt-2">
             <span className="font-semibold">📲 Story de hoje:</span> {current.story}
           </p>
         )}
@@ -120,7 +120,7 @@ export function DayCard({
           <button
             onClick={handleScript}
             disabled={loadingScript}
-            className="mt-2 w-full text-xs bg-violet-900/40 hover:bg-violet-900/60 border border-violet-700/50 text-violet-300 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1"
+            className="mt-2 w-full text-xs bg-rose-900/40 hover:bg-rose-900/60 border border-rose-700/50 text-rose-300 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1"
           >
             {loadingScript ? (
               <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -138,9 +138,9 @@ export function DayCard({
       </div>
 
       {showScript && script && (
-        <div className="mt-2 bg-slate-800/60 rounded-lg p-3 border border-slate-700/50">
-          <p className="text-xs text-violet-400 font-semibold mb-1">Roteiro 30s</p>
-          <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">{script}</p>
+        <div className="mt-2 bg-neutral-800/60 rounded-lg p-3 border border-neutral-700/50">
+          <p className="text-xs text-rose-400 font-semibold mb-1">Roteiro 30s</p>
+          <p className="text-xs text-neutral-300 whitespace-pre-wrap leading-relaxed">{script}</p>
         </div>
       )}
     </div>

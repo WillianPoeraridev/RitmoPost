@@ -16,7 +16,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full bg-slate-950 text-white">
+      <body className="min-h-full bg-neutral-950 text-white">
         <PostHogProvider>{children}</PostHogProvider>
       </body>
     </html>

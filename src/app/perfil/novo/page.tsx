@@ -10,13 +10,13 @@ export default async function NovoPerfilPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/dashboard" className="text-xl font-bold text-violet-400">
+      <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+        <Link href="/dashboard" className="text-xl font-bold text-rose-400">
           RitmoPost
         </Link>
         <Link
           href="/perfil"
-          className="text-sm text-slate-400 hover:text-white transition-colors"
+          className="text-sm text-neutral-400 hover:text-white transition-colors"
         >
           ← Perfis
         </Link>
@@ -25,7 +25,7 @@ export default async function NovoPerfilPage() {
       <div className="max-w-2xl mx-auto w-full px-6 py-10 flex-1">
         <div className="mb-8">
           <h1 className="text-2xl font-bold">Cadastrar negócio</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-neutral-400 text-sm mt-1">
             Esses dados entram direto nos posts: serviços com preço, tom de voz e referências do
             seu bairro
           </p>

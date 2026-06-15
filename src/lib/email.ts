@@ -18,7 +18,7 @@ export function emailLayout(inner: string): string {
 export function emailButton(href: string, text: string): string {
   return `
     <p style="margin:24px 0">
-      <a href="${href}" style="background:#7c3aed;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">
+      <a href="${href}" style="background:#f43f5e;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">
         ${text}
       </a>
     </p>
@@ -56,7 +56,7 @@ export const RETENTION_EMAILS: RetentionEmail[] = [
     dayOffset: 3,
     subject: "Qual tipo de post performa melhor no seu nicho?",
     body: ({ name, url }) => `
-      <h2 style="color:#7c3aed">Oi, ${name}! 👋</h2>
+      <h2 style="color:#f43f5e">Oi, ${name}! 👋</h2>
       <p>Uma dica rápida: no Instagram, <strong>Reels e Carrossel</strong> costumam alcançar muito mais que Feed parado — por isso o RitmoPost já monta seu mês com a mistura certa.</p>
       <p>Se ainda não gerou seu calendário, leva uns 30 segundos:</p>
       ${emailButton(`${url}/gerar`, "Gerar meu calendário →")}
@@ -67,7 +67,7 @@ export const RETENTION_EMAILS: RetentionEmail[] = [
     dayOffset: 7,
     subject: "Já gerou seu calendário deste mês?",
     body: ({ name, url }) => `
-      <h2 style="color:#7c3aed">${name}, o mês não espera ⏳</h2>
+      <h2 style="color:#f43f5e">${name}, o mês não espera ⏳</h2>
       <p>Cada dia sem postar é alcance que não volta. Seu calendário com 30 dias de ideias, legendas e hashtags já está a um clique.</p>
       ${emailButton(`${url}/gerar`, "Gerar agora →")}
       <p style="color:#6b7280;font-size:14px">Dica: cadastre o <strong>perfil do seu negócio</strong> antes — aí os posts saem citando seus serviços, preços e bairro.</p>
@@ -78,7 +78,7 @@ export const RETENTION_EMAILS: RetentionEmail[] = [
     dayOffset: 20,
     subject: "Semana que vem é mês novo — bora adiantar?",
     body: ({ name, url, nextMonthName }) => `
-      <h2 style="color:#7c3aed">Adianta o de ${nextMonthName}, ${name} 🚀</h2>
+      <h2 style="color:#f43f5e">Adianta o de ${nextMonthName}, ${name} 🚀</h2>
       <p>Quem planeja com antecedência posta com consistência. Gere já o calendário de <strong>${nextMonthName}</strong> e comece o mês com tudo pronto.</p>
       ${emailButton(`${url}/gerar`, `Gerar ${nextMonthName} →`)}
     `,
@@ -88,7 +88,7 @@ export const RETENTION_EMAILS: RetentionEmail[] = [
     dayOffset: 25,
     subject: "Mês novo chegando — seu conteúdo já está pronto?",
     body: ({ name, url, nextMonthName }) => `
-      <h2 style="color:#7c3aed">Falta pouco pra ${nextMonthName}! 📅</h2>
+      <h2 style="color:#f43f5e">Falta pouco pra ${nextMonthName}! 📅</h2>
       <p>${name}, não deixa a tela em branco voltar. Em poucos segundos você tem o mês inteiro de conteúdo pronto pra copiar e postar.</p>
       ${emailButton(`${url}/gerar`, `Preparar ${nextMonthName} →`)}
     `,
@@ -98,7 +98,7 @@ export const RETENTION_EMAILS: RetentionEmail[] = [
     dayOffset: 28,
     subject: "Em uma palavra: como foi o RitmoPost esse mês?",
     body: ({ name }) => `
-      <h2 style="color:#7c3aed">Queria muito te ouvir, ${name} 💜</h2>
+      <h2 style="color:#f43f5e">Queria muito te ouvir, ${name} 💜</h2>
       <p>Você está com a gente há quase um mês. Em <strong>uma palavra</strong>, como foi a experiência com o RitmoPost?</p>
       <p>É só responder este e-mail — leio todas. Seu feedback decide o que a gente constrói em seguida.</p>
     `,

@@ -23,8 +23,8 @@ export async function GET(
   }
 
   const { id } = await params;
-  const color = req.nextUrl.searchParams.get("color") ?? "#7c3aed";
-  const primaryColor = VALID_COLORS.test(color) ? color : "#7c3aed";
+  const color = req.nextUrl.searchParams.get("color") ?? "#f43f5e";
+  const primaryColor = VALID_COLORS.test(color) ? color : "#f43f5e";
 
   const [cal] = await db
     .select()

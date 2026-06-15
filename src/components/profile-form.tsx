@@ -27,7 +27,7 @@ export type ProfileFormData = {
 };
 
 const inputClass =
-  "w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors";
+  "w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors";
 
 export function ProfileForm({
   profileId,
@@ -118,7 +118,7 @@ export function ProfileForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5"
+      className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-5"
     >
       {error && (
         <div className="bg-red-900/30 border border-red-700/50 text-red-300 text-sm px-4 py-3 rounded-lg">
@@ -128,7 +128,7 @@ export function ProfileForm({
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Nome do negócio *</label>
+          <label className="block text-sm text-neutral-400 mb-1">Nome do negócio *</label>
           <input
             type="text"
             required
@@ -139,7 +139,7 @@ export function ProfileForm({
           />
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Nicho / Segmento *</label>
+          <label className="block text-sm text-neutral-400 mb-1">Nicho / Segmento *</label>
           <input
             type="text"
             required
@@ -158,9 +158,9 @@ export function ProfileForm({
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-1">
+        <label className="block text-sm text-neutral-400 mb-1">
           Serviços e preços
-          <span className="text-slate-600"> — os posts vão citar esses valores</span>
+          <span className="text-neutral-600"> — os posts vão citar esses valores</span>
         </label>
         <div className="space-y-2">
           {services.map((service, i) => (
@@ -183,7 +183,7 @@ export function ProfileForm({
                 <button
                   type="button"
                   onClick={() => setServices((prev) => prev.filter((_, j) => j !== i))}
-                  className="text-slate-500 hover:text-red-400 px-2 transition-colors"
+                  className="text-neutral-500 hover:text-red-400 px-2 transition-colors"
                   aria-label="Remover serviço"
                 >
                   ✕
@@ -196,7 +196,7 @@ export function ProfileForm({
           <button
             type="button"
             onClick={() => setServices((prev) => [...prev, { name: "", price: "" }])}
-            className="text-xs text-violet-400 hover:underline mt-2"
+            className="text-xs text-rose-400 hover:underline mt-2"
           >
             + Adicionar serviço
           </button>
@@ -204,7 +204,7 @@ export function ProfileForm({
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-1">Tom de voz</label>
+        <label className="block text-sm text-neutral-400 mb-1">Tom de voz</label>
         <div className="grid sm:grid-cols-3 gap-2">
           {TONE_OPTIONS.map((opt) => (
             <button
@@ -213,12 +213,12 @@ export function ProfileForm({
               onClick={() => setTone(opt.value)}
               className={`py-2.5 px-3 rounded-lg text-sm border text-left transition-colors ${
                 tone === opt.value
-                  ? "bg-violet-600 border-violet-500 text-white"
-                  : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
+                  ? "bg-rose-600 border-rose-500 text-white"
+                  : "bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-neutral-700"
               }`}
             >
               <span className="font-medium block">{opt.label}</span>
-              <span className={`text-xs ${tone === opt.value ? "text-violet-200" : "text-slate-500"}`}>
+              <span className={`text-xs ${tone === opt.value ? "text-rose-200" : "text-neutral-500"}`}>
                 {opt.hint}
               </span>
             </button>
@@ -227,7 +227,7 @@ export function ProfileForm({
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-1">Diferenciais</label>
+        <label className="block text-sm text-neutral-400 mb-1">Diferenciais</label>
         <textarea
           value={differentials}
           onChange={(e) => setDifferentials(e.target.value)}
@@ -240,7 +240,7 @@ export function ProfileForm({
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Cidade</label>
+          <label className="block text-sm text-neutral-400 mb-1">Cidade</label>
           <input
             type="text"
             value={city}
@@ -250,7 +250,7 @@ export function ProfileForm({
           />
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Bairro</label>
+          <label className="block text-sm text-neutral-400 mb-1">Bairro</label>
           <input
             type="text"
             value={neighborhood}
@@ -263,7 +263,7 @@ export function ProfileForm({
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Promoções recorrentes</label>
+          <label className="block text-sm text-neutral-400 mb-1">Promoções recorrentes</label>
           <input
             type="text"
             value={recurringPromos}
@@ -273,7 +273,7 @@ export function ProfileForm({
           />
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Instagram</label>
+          <label className="block text-sm text-neutral-400 mb-1">Instagram</label>
           <input
             type="text"
             value={instagramHandle}
@@ -300,7 +300,7 @@ export function ProfileForm({
         <button
           type="submit"
           disabled={loading || !businessName || !niche}
-          className="bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors px-6 py-2.5 rounded-xl font-semibold"
+          className="bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors px-6 py-2.5 rounded-xl font-semibold"
         >
           {loading ? "Salvando..." : profileId ? "Salvar alterações" : "Criar perfil"}
         </button>

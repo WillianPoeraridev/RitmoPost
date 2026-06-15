@@ -30,7 +30,7 @@ export function UpgradeButton({ label = "Assinar Pro" }: { label?: string }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+        className="bg-rose-600 hover:bg-rose-500 transition-colors px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
       >
         {label}
       </button>
@@ -41,20 +41,20 @@ export function UpgradeButton({ label = "Assinar Pro" }: { label?: string }) {
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md"
+            className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-xl font-bold">Assine o Pro</h2>
               <button
                 onClick={() => setOpen(false)}
-                className="text-slate-500 hover:text-white transition-colors text-xl leading-none"
+                className="text-neutral-500 hover:text-white transition-colors text-xl leading-none"
                 aria-label="Fechar"
               >
                 ✕
               </button>
             </div>
-            <p className="text-sm text-slate-400 mb-5">
+            <p className="text-sm text-neutral-400 mb-5">
               Calendários ilimitados, PDF sem marca d&apos;água e o post do dia no seu WhatsApp.
             </p>
 
@@ -63,17 +63,17 @@ export function UpgradeButton({ label = "Assinar Pro" }: { label?: string }) {
               <button
                 onClick={() => checkout("yearly")}
                 disabled={loading !== null}
-                className="w-full text-left bg-violet-600/15 border-2 border-violet-500 hover:bg-violet-600/25 disabled:opacity-50 transition-colors rounded-xl p-4 relative"
+                className="w-full text-left bg-rose-600/15 border-2 border-rose-500 hover:bg-rose-600/25 disabled:opacity-50 transition-colors rounded-xl p-4 relative"
               >
-                <span className="absolute top-3 right-3 text-[10px] font-bold bg-violet-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
-                  Economize 2 meses
+                <span className="absolute top-3 right-3 text-[10px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
+                  3 meses grátis
                 </span>
                 <p className="font-semibold">Anual</p>
                 <p className="text-2xl font-bold mt-1">
-                  R$239<span className="text-sm font-normal text-slate-400">/ano</span>
+                  R$269<span className="text-sm font-normal text-neutral-400">/ano</span>
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">equivale a ~R$19,90/mês</p>
-                <p className="text-sm text-violet-300 mt-2 font-medium">
+                <p className="text-xs text-neutral-400 mt-0.5">equivale a ~R$22,40/mês</p>
+                <p className="text-sm text-rose-300 mt-2 font-medium">
                   {loading === "yearly" ? "Aguarde..." : "Assinar anual →"}
                 </p>
               </button>
@@ -81,19 +81,19 @@ export function UpgradeButton({ label = "Assinar Pro" }: { label?: string }) {
               <button
                 onClick={() => checkout("monthly")}
                 disabled={loading !== null}
-                className="w-full text-left bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-50 transition-colors rounded-xl p-4"
+                className="w-full text-left bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 disabled:opacity-50 transition-colors rounded-xl p-4"
               >
                 <p className="font-semibold">Mensal</p>
                 <p className="text-2xl font-bold mt-1">
-                  R$29,90<span className="text-sm font-normal text-slate-400">/mês</span>
+                  R$29,90<span className="text-sm font-normal text-neutral-400">/mês</span>
                 </p>
-                <p className="text-sm text-slate-300 mt-2 font-medium">
+                <p className="text-sm text-neutral-300 mt-2 font-medium">
                   {loading === "monthly" ? "Aguarde..." : "Assinar mensal →"}
                 </p>
               </button>
             </div>
 
-            <p className="text-xs text-slate-500 text-center mt-4">
+            <p className="text-xs text-neutral-500 text-center mt-4">
               Cancela quando quiser · PIX ou cartão
             </p>
           </div>

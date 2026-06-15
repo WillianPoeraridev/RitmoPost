@@ -63,15 +63,15 @@ export default async function DashboardPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-violet-400">RitmoPost</span>
+      <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+        <span className="text-xl font-bold text-rose-400">RitmoPost</span>
         <div className="flex items-center gap-4">
           {isPro && (
-            <span className="text-xs bg-violet-600/30 border border-violet-600/50 text-violet-300 px-2 py-1 rounded-full font-medium">
+            <span className="text-xs bg-rose-600/30 border border-rose-600/50 text-rose-300 px-2 py-1 rounded-full font-medium">
               Pro
             </span>
           )}
-          <span className="text-sm text-slate-500 hidden sm:block">
+          <span className="text-sm text-neutral-500 hidden sm:block">
             {session.user.email}
           </span>
           <SignOutButton />
@@ -88,7 +88,7 @@ export default async function DashboardPage({
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold">Meus Calendários</h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-neutral-400 text-sm mt-1">
               {isPro
                 ? "Gerações ilimitadas no plano Pro"
                 : `${generationsUsed}/1 geração usada no plano grátis`}
@@ -97,21 +97,21 @@ export default async function DashboardPage({
           <div className="flex items-center gap-3">
             <Link
               href="/perfil"
-              className="text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 px-3 py-2 rounded-lg transition-colors"
+              className="text-xs text-neutral-400 hover:text-white border border-neutral-700 hover:border-neutral-600 px-3 py-2 rounded-lg transition-colors"
             >
               Perfis do negócio
             </Link>
             {calendars.length > 0 && (
               <Link
                 href={agencyMode ? "/dashboard" : "/dashboard?view=agencia"}
-                className="text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 px-3 py-2 rounded-lg transition-colors"
+                className="text-xs text-neutral-400 hover:text-white border border-neutral-700 hover:border-neutral-600 px-3 py-2 rounded-lg transition-colors"
               >
                 {agencyMode ? "Vista lista" : "Vista agência"}
               </Link>
             )}
             <Link
               href="/gerar"
-              className="bg-violet-600 hover:bg-violet-500 transition-colors px-5 py-2.5 rounded-xl font-medium text-sm"
+              className="bg-rose-600 hover:bg-rose-500 transition-colors px-5 py-2.5 rounded-xl font-medium text-sm"
             >
               + Novo calendário
             </Link>
@@ -126,10 +126,10 @@ export default async function DashboardPage({
         )}
 
         {!isPro && generationsUsed >= 1 && (
-          <div className="bg-violet-900/20 border border-violet-700/50 rounded-xl p-5 mb-8 flex items-center justify-between gap-4">
+          <div className="bg-rose-900/20 border border-rose-700/50 rounded-xl p-5 mb-8 flex items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-violet-300">Você usou sua geração grátis</p>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="font-semibold text-rose-300">Você usou sua geração grátis</p>
+              <p className="text-sm text-neutral-400 mt-1">
                 Assine o Pro para gerar calendários ilimitados por R$29,90/mês
               </p>
             </div>
@@ -138,11 +138,11 @@ export default async function DashboardPage({
         )}
 
         {calendars.length === 0 ? (
-          <div className="text-center py-20 text-slate-500">
+          <div className="text-center py-20 text-neutral-500">
             <p className="text-5xl mb-4">📅</p>
             <p className="text-lg mb-2">Nenhum calendário ainda</p>
             <p className="text-sm mb-6">Gere seu primeiro e o mês de conteúdo estará pronto</p>
-            <Link href="/gerar" className="text-violet-400 hover:underline text-sm">
+            <Link href="/gerar" className="text-rose-400 hover:underline text-sm">
               Gerar meu primeiro calendário →
             </Link>
           </div>
@@ -150,32 +150,32 @@ export default async function DashboardPage({
           // Vista agência — agrupado por negócio
           <div className="space-y-6">
             {Array.from(grouped.entries()).map(([businessName, cals]) => (
-              <div key={businessName} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+              <div key={businessName} className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
+                <div className="px-5 py-4 border-b border-neutral-800 flex items-center justify-between">
                   <div>
                     <p className="font-semibold">{businessName}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{cals[0].niche} · {cals.length} calendário{cals.length > 1 ? "s" : ""}</p>
+                    <p className="text-xs text-neutral-500 mt-0.5">{cals[0].niche} · {cals.length} calendário{cals.length > 1 ? "s" : ""}</p>
                   </div>
                   <Link
                     href={`/gerar`}
-                    className="text-xs text-violet-400 hover:underline"
+                    className="text-xs text-rose-400 hover:underline"
                   >
                     + Novo mês
                   </Link>
                 </div>
-                <div className="divide-y divide-slate-800">
+                <div className="divide-y divide-neutral-800">
                   {cals.map((cal) => (
                     <Link
                       key={cal.id}
                       href={`/calendario/${cal.id}`}
-                      className="flex items-center justify-between px-5 py-3 hover:bg-slate-800/50 transition-colors"
+                      className="flex items-center justify-between px-5 py-3 hover:bg-neutral-800/50 transition-colors"
                     >
-                      <p className="text-sm text-slate-300">
+                      <p className="text-sm text-neutral-300">
                         {MONTH_NAMES[cal.month]}/{cal.year}
                       </p>
                       <div className="flex items-center gap-3">
-                        <span className="text-xs text-slate-500">{(cal.content as unknown[]).length} dias</span>
-                        <span className="text-slate-600 text-sm">Ver →</span>
+                        <span className="text-xs text-neutral-500">{(cal.content as unknown[]).length} dias</span>
+                        <span className="text-neutral-600 text-sm">Ver →</span>
                       </div>
                     </Link>
                   ))}
@@ -190,16 +190,16 @@ export default async function DashboardPage({
               <Link
                 key={cal.id}
                 href={`/calendario/${cal.id}`}
-                className="bg-slate-900 border border-slate-800 hover:border-violet-700/50 transition-colors rounded-xl p-5 flex items-center justify-between"
+                className="bg-neutral-900 border border-neutral-800 hover:border-rose-700/50 transition-colors rounded-xl p-5 flex items-center justify-between"
               >
                 <div>
                   <p className="font-semibold">{cal.businessName}</p>
-                  <p className="text-sm text-slate-400 mt-0.5">
+                  <p className="text-sm text-neutral-400 mt-0.5">
                     {cal.niche} · {MONTH_NAMES[cal.month]}/{cal.year} ·{" "}
                     {(cal.content as unknown[]).length} dias gerados
                   </p>
                 </div>
-                <span className="text-slate-600 text-sm">Ver →</span>
+                <span className="text-neutral-600 text-sm">Ver →</span>
               </Link>
             ))}
           </div>

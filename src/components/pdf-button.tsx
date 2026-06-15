@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 const COLORS = [
-  { label: "Violeta", value: "#7c3aed" },
+  { label: "Coral", value: "#f43f5e" },
   { label: "Rosa", value: "#db2777" },
   { label: "Azul", value: "#2563eb" },
   { label: "Verde", value: "#059669" },
@@ -11,17 +11,17 @@ const COLORS = [
 ];
 
 export function PdfButton({ calendarId, isPro = true }: { calendarId: string; isPro?: boolean }) {
-  const [color, setColor] = useState("#7c3aed");
+  const [color, setColor] = useState("#f43f5e");
   const [open, setOpen] = useState(false);
 
   return (
     <div className="relative">
-      <div className="flex rounded-lg overflow-hidden border border-violet-600">
+      <div className="flex rounded-lg overflow-hidden border border-rose-600">
         <a
           href={`/calendario/${calendarId}/pdf?color=${encodeURIComponent(color)}`}
           target="_blank"
           title={isPro ? "Baixar PDF completo" : "Prévia com marca d'água — assine o Pro para o PDF limpo"}
-          className="bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 text-sm font-medium flex items-center gap-2"
+          className="bg-rose-600 hover:bg-rose-500 transition-colors px-4 py-2 text-sm font-medium flex items-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -30,7 +30,7 @@ export function PdfButton({ calendarId, isPro = true }: { calendarId: string; is
         </a>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="bg-violet-700 hover:bg-violet-600 transition-colors px-2 border-l border-violet-500"
+          className="bg-rose-700 hover:bg-rose-600 transition-colors px-2 border-l border-rose-500"
           title="Escolher cor"
         >
           <div className="w-4 h-4 rounded-full border-2 border-white/50" style={{ backgroundColor: color }} />
@@ -38,8 +38,8 @@ export function PdfButton({ calendarId, isPro = true }: { calendarId: string; is
       </div>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-xl z-10 min-w-[160px]">
-          <p className="text-xs text-slate-500 mb-2">Cor do PDF</p>
+        <div className="absolute right-0 top-full mt-2 bg-neutral-900 border border-neutral-700 rounded-xl p-3 shadow-xl z-10 min-w-[160px]">
+          <p className="text-xs text-neutral-500 mb-2">Cor do PDF</p>
           <div className="grid grid-cols-3 gap-2">
             {COLORS.map((c) => (
               <button

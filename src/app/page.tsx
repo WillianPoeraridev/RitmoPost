@@ -1,123 +1,183 @@
 import Link from "next/link";
 
-const EXAMPLE_DAYS = [
-  { day: 1, type: "Reels", theme: "Antes e Depois do Degradê", hook: "Esse corte mudou tudo" },
-  { day: 2, type: "Carrossel", theme: "5 erros no corte que afastam clientes", hook: "Você comete o #3?" },
-  { day: 3, type: "Story", theme: "Bastidores da semana", hook: "O dia a dia da barbearia" },
-  { day: 4, type: "Feed", theme: "Cliente feliz com o resultado", hook: "Transformação real aqui" },
-  { day: 5, type: "Reels", theme: "Técnica de barba em 60 segundos", hook: "Aprenda em 1 minuto" },
-  { day: 6, type: "Carrossel", theme: "Tipos de degradê: qual combina com você?", hook: "Qual é o seu?" },
-  { day: 7, type: "Feed", theme: "Promoção Domingo: corte + barba", hook: "Só hoje!" },
-  { day: 8, type: "Reels", theme: "Reação do cliente ao ver o resultado", hook: "A cara dele disse tudo" },
-  { day: 9, type: "Story", theme: "Agenda da semana — horários disponíveis", hook: "Ainda tem vaga!" },
-  { day: 10, type: "Carrossel", theme: "Cuidados pós-corte para durar mais", hook: "Dicas que ninguém conta" },
+// Preview do produto no hero — mostra o plano com método, não um exemplo pra convencer.
+const PREVIEW = [
+  { day: 1, type: "Reels", pillar: "Atração", color: "bg-rose-600", theme: "O erro que afasta cliente" },
+  { day: 2, type: "Story", pillar: "Conexão", color: "bg-cyan-600", theme: "O bastidor de hoje" },
+  { day: 5, type: "Carrossel", pillar: "Conversão", color: "bg-green-600", theme: "Tá na hora de agendar" },
 ];
 
-const TYPE_COLORS: Record<string, string> = {
-  Reels: "bg-violet-600",
-  Carrossel: "bg-sky-600",
-  Story: "bg-amber-500",
-  Feed: "bg-emerald-600",
-};
+const PILLARS = [
+  { label: "Atração", color: "bg-rose-600", gloss: "novos seguidores" },
+  { label: "Conexão", color: "bg-cyan-600", gloss: "confiança" },
+  { label: "Conversão", color: "bg-green-600", gloss: "venda" },
+];
+
+const STEPS = [
+  {
+    title: "Conta do seu negócio",
+    text: "Nicho, serviços, preços e bairro.",
+    icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+  },
+  {
+    title: "A IA monta seu mês",
+    text: "30 posts com método, em 10 segundos.",
+    icon: "M13 10V3L4 14h7v7l9-11h-7z",
+  },
+  {
+    title: "Recebe e posta",
+    text: "O post do dia chega no seu WhatsApp.",
+    icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
+  },
+];
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-violet-400">RitmoPost</span>
-        <div className="flex gap-3">
-          <Link
-            href="/login"
-            className="text-sm text-slate-400 hover:text-white transition-colors px-4 py-2"
-          >
-            Entrar
-          </Link>
-          <Link
-            href="/cadastro"
-            className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium"
-          >
-            Criar grátis
-          </Link>
+    <div className="min-h-screen flex flex-col bg-neutral-950">
+      <nav className="border-b border-neutral-800">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <span className="text-xl font-bold bg-gradient-to-r from-rose-400 to-orange-400 bg-clip-text text-transparent">
+            RitmoPost
+          </span>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/login"
+              className="text-sm text-neutral-400 hover:text-white transition-colors px-4 py-2"
+            >
+              Entrar
+            </Link>
+            <Link
+              href="/cadastro"
+              className="text-sm bg-rose-500 hover:bg-rose-400 transition-colors px-4 py-2 rounded-lg font-medium text-white"
+            >
+              Criar grátis
+            </Link>
+          </div>
         </div>
       </nav>
 
-      <section className="flex flex-col items-center justify-center text-center px-6 py-20">
-        <div className="inline-block bg-violet-900/30 border border-violet-700/50 text-violet-300 text-xs font-medium px-3 py-1 rounded-full mb-6">
-          Gerado por IA · Personalizado para o seu negócio
-        </div>
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl">
-          30 dias de conteúdo para o{" "}
-          <span className="text-violet-400">Instagram</span> em{" "}
-          <span className="text-violet-400">10 segundos</span>
-        </h1>
-        <p className="text-lg text-slate-400 mb-10 max-w-xl">
-          Chega de &quot;o que eu posto hoje?&quot;. Digite seu nicho, a IA cria o calendário inteiro — ideias, legendas prontas e hashtags. Você baixa em PDF e usa.
-        </p>
-        <Link
-          href="/cadastro"
-          className="bg-violet-600 hover:bg-violet-500 transition-colors text-white font-semibold px-8 py-4 rounded-xl text-lg shadow-lg shadow-violet-900/40"
-        >
-          Gerar meu primeiro calendário grátis →
-        </Link>
-        <p className="text-xs text-slate-500 mt-4">
-          Sem cartão. 1 calendário grátis. Plano Pro R$29,90/mês.
-        </p>
-      </section>
-
-      <section className="max-w-5xl mx-auto w-full px-6 pb-20">
-        <p className="text-center text-slate-500 text-sm mb-6">
-          Exemplo gerado para uma Barbearia — em 10 segundos
-        </p>
-        <div className="grid grid-cols-5 gap-3">
-          {EXAMPLE_DAYS.map((day) => (
-            <div
-              key={day.day}
-              className="bg-slate-900 border border-slate-800 rounded-xl p-3 hover:border-violet-700/50 transition-colors"
-            >
-              <p className="text-xs text-slate-600 mb-2">Dia {day.day}</p>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[day.type]}`}>
-                {day.type}
+      {/* HERO */}
+      <section className="max-w-6xl mx-auto w-full px-6 py-10 lg:py-14">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          {/* Texto à esquerda */}
+          <div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
+              Seu mês inteiro de Instagram,{" "}
+              <span className="bg-gradient-to-r from-rose-400 to-orange-400 bg-clip-text text-transparent">
+                pronto em 10 segundos.
               </span>
-              <p className="text-sm font-medium text-slate-200 mt-2 leading-tight">{day.theme}</p>
-              <p className="text-xs text-slate-500 mt-1 italic">{day.hook}</p>
+            </h1>
+            <p className="text-lg text-neutral-400 mt-5 max-w-md">
+              Posts, stories e legendas feitos pro seu negócio.
+            </p>
+            <div className="mt-7 flex flex-col sm:flex-row sm:items-center gap-4">
+              <Link
+                href="/cadastro"
+                className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-400 hover:to-orange-400 transition-colors text-white font-semibold px-7 py-3.5 rounded-xl text-lg shadow-lg shadow-rose-900/30 text-center"
+              >
+                Gerar meu plano grátis →
+              </Link>
+              <span className="text-xs text-neutral-500">
+                Grátis pra começar.<br className="hidden sm:block" /> Sem cartão.
+              </span>
             </div>
-          ))}
+          </div>
+
+          {/* Preview do produto à direita */}
+          <div>
+            <div className="relative">
+              <div className="absolute -inset-6 bg-gradient-to-tr from-rose-600/25 to-orange-600/10 blur-3xl rounded-full" />
+              <div className="relative bg-neutral-900 border border-neutral-800 rounded-2xl p-5 shadow-2xl">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-semibold text-neutral-200">Seu plano do mês</span>
+                  <span className="text-xs text-neutral-600">30 dias</span>
+                </div>
+                <div className="space-y-2.5">
+                  {PREVIEW.map((p) => (
+                    <div key={p.day} className="flex items-center gap-3 bg-neutral-950/70 border border-neutral-800 rounded-xl px-3 py-2.5">
+                      <span className="text-xs text-neutral-600 font-medium w-10 shrink-0">Dia {p.day}</span>
+                      <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${p.color} shrink-0`}>
+                        {p.pillar}
+                      </span>
+                      <span className="text-sm text-neutral-300 truncate">{p.theme}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-neutral-600 mt-4">+ 27 dias, cada um com um propósito.</p>
+              </div>
+            </div>
+
+            {/* Método — legenda compacta sob o preview */}
+            <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 px-1">
+              {PILLARS.map((p) => (
+                <div key={p.label} className="flex items-center gap-2 group">
+                  <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${p.color} transition-transform group-hover:scale-105`}>
+                    {p.label}
+                  </span>
+                  <span className="text-xs text-neutral-500">{p.gloss}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <p className="text-center text-slate-600 text-xs mt-4">
-          + 20 dias com legendas completas e hashtags. Tudo exportado em PDF profissional.
-        </p>
       </section>
 
-      <section className="border-t border-slate-800 py-20 px-6">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Preço simples</h2>
+      {/* COMO FUNCIONA */}
+      <section className="border-t border-neutral-800">
+        <div className="max-w-6xl mx-auto px-6 py-10">
+          <h2 className="text-2xl font-bold mb-6">Como funciona</h2>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {STEPS.map((s, i) => (
+              <div key={s.title} className="flex items-start gap-4 bg-neutral-900 border border-neutral-800 rounded-xl p-5">
+                <div className="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={s.icon} />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
+                    Passo {i + 1}
+                  </p>
+                  <h3 className="font-semibold leading-tight mt-0.5">{s.title}</h3>
+                  <p className="text-sm text-neutral-400 mt-1 leading-snug">{s.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PREÇO */}
+      <section className="border-t border-neutral-800">
+        <div className="max-w-4xl mx-auto px-6 py-10">
+          <h2 className="text-3xl font-bold mb-6">Entre pro ritmo.</h2>
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-              <h3 className="text-lg font-semibold text-slate-300 mb-2">Grátis</h3>
+            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-8">
+              <h3 className="text-lg font-semibold text-neutral-300 mb-2">Grátis</h3>
               <p className="text-4xl font-bold mb-6">R$0</p>
-              <ul className="space-y-3 text-slate-400 text-sm mb-8">
-                <li>✓ 1 calendário completo de 30 dias</li>
-                <li>✓ PDF para download</li>
-                <li>✓ Personalizado para seu nicho</li>
+              <ul className="space-y-3 text-neutral-400 text-sm mb-8">
+                <li>✓ 1 plano pro seu nicho</li>
+                <li>✓ Prévia de 7 dias</li>
+                <li>✓ Sem cartão</li>
               </ul>
-              <Link href="/cadastro" className="block text-center bg-slate-800 hover:bg-slate-700 transition-colors py-3 rounded-xl font-medium">
+              <Link href="/cadastro" className="block text-center bg-neutral-800 hover:bg-neutral-700 transition-colors py-3 rounded-xl font-medium">
                 Começar grátis
               </Link>
             </div>
-            <div className="bg-violet-900/20 border border-violet-700/50 rounded-2xl p-8">
+            <div className="bg-rose-950/20 border border-rose-900/40 rounded-2xl p-8">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-lg font-semibold">Pro</h3>
-                <span className="text-xs bg-violet-600 px-2 py-0.5 rounded-full">Mais popular</span>
+                <span className="text-xs bg-gradient-to-r from-rose-500 to-orange-500 px-2 py-0.5 rounded-full text-white">Mais popular</span>
               </div>
-              <p className="text-4xl font-bold mb-1">R$29,90<span className="text-lg text-slate-400 font-normal">/mês</span></p>
-              <p className="text-sm text-slate-400 mb-6">ou R$239/ano — economize 2 meses</p>
-              <ul className="space-y-3 text-slate-300 text-sm mb-8">
-                <li>✓ Calendários ilimitados</li>
-                <li>✓ PDF profissional todo mês</li>
+              <p className="text-4xl font-bold mb-1">R$29,90<span className="text-lg text-neutral-400 font-normal">/mês</span></p>
+              <p className="text-sm text-neutral-400 mb-6">ou R$269/ano · 3 meses grátis</p>
+              <ul className="space-y-3 text-neutral-300 text-sm mb-8">
+                <li>✓ Planos ilimitados</li>
+                <li>✓ O post do dia no seu WhatsApp</li>
+                <li>✓ PDF sem marca d&apos;água</li>
                 <li>✓ Histórico de 12 meses</li>
-                <li>✓ Qualquer nicho e negócio</li>
               </ul>
-              <Link href="/cadastro" className="block text-center bg-violet-600 hover:bg-violet-500 transition-colors py-3 rounded-xl font-semibold shadow-lg shadow-violet-900/40">
+              <Link href="/cadastro" className="block text-center bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-400 hover:to-orange-400 transition-colors py-3 rounded-xl font-semibold shadow-lg shadow-rose-900/30 text-white">
                 Assinar Pro
               </Link>
             </div>
@@ -125,8 +185,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-800 py-8 text-center text-slate-600 text-sm">
-        RitmoPost · Conteúdo para Instagram com IA · contato@ritmopost.com.br
+      <footer className="border-t border-neutral-800 py-8 px-6">
+        <div className="max-w-6xl mx-auto text-neutral-600 text-sm">
+          RitmoPost · ritmopost.com.br
+        </div>
       </footer>
     </div>
   );

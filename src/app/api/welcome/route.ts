@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     session.user.email,
     "Seu acesso está ativo ✨",
     `
-      <h2 style="color:#7c3aed">Bem-vindo ao RitmoPost, ${name}! 🎉</h2>
+      <h2 style="color:#f43f5e">Bem-vindo ao RitmoPost, ${name}! 🎉</h2>
       <p>Seu acesso está ativo. Você tem <strong>1 calendário grátis</strong> pra usar agora.</p>
       ${emailButton(`${process.env.NEXT_PUBLIC_URL}/gerar`, "Gerar meu calendário →")}
       <p style="color:#6b7280;font-size:14px">

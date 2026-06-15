@@ -55,11 +55,11 @@ export default async function PublicCalendarPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-violet-400">RitmoPost</Link>
+      <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="text-xl font-bold text-rose-400">RitmoPost</Link>
         <Link
           href="/"
-          className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium"
+          className="text-sm bg-rose-600 hover:bg-rose-500 transition-colors px-4 py-2 rounded-lg font-medium"
         >
           Criar o meu grátis →
         </Link>
@@ -68,7 +68,7 @@ export default async function PublicCalendarPage({
       <div className="max-w-6xl mx-auto w-full px-6 py-10">
         <div className="mb-8">
           <h1 className="text-2xl font-bold">{cal.businessName}</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-neutral-400 text-sm mt-1">
             {cal.niche} · {MONTH_NAMES[cal.month]} {cal.year} · {allDays.length} dias
           </p>
         </div>
@@ -83,9 +83,9 @@ export default async function PublicCalendarPage({
 
         {/* O método por trás do calendário — o que diferencia de "30 ideias soltas" */}
         {days.some((d) => d.pillar) && (
-          <div className="mb-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-            <p className="text-xs text-slate-400 mb-3">
-              Cada post tem uma <span className="text-slate-200 font-medium">função estratégica</span> — um plano que constrói a marca e traz cliente sem correr atrás:
+          <div className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/40 p-4">
+            <p className="text-xs text-neutral-400 mb-3">
+              Cada post tem uma <span className="text-neutral-200 font-medium">função estratégica</span> — um plano que constrói a marca e traz cliente sem correr atrás:
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               {([
@@ -97,7 +97,7 @@ export default async function PublicCalendarPage({
                   <span className={`mt-0.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white ${p.color} shrink-0`}>
                     {p.label}
                   </span>
-                  <span className="text-xs text-slate-500 leading-snug">{p.desc}</span>
+                  <span className="text-xs text-neutral-500 leading-snug">{p.desc}</span>
                 </div>
               ))}
             </div>
@@ -108,11 +108,11 @@ export default async function PublicCalendarPage({
           {days.map((day) => (
             <div
               key={day.day}
-              className="bg-slate-900 border border-slate-800 hover:border-violet-700/30 transition-colors rounded-xl p-3 group"
+              className="bg-neutral-900 border border-neutral-800 hover:border-rose-700/30 transition-colors rounded-xl p-3 group"
             >
-              <p className="text-xs text-slate-600 mb-2 font-medium">Dia {day.day}</p>
+              <p className="text-xs text-neutral-600 mb-2 font-medium">Dia {day.day}</p>
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[day.type] ?? "bg-slate-600"}`}>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${TYPE_COLORS[day.type] ?? "bg-neutral-600"}`}>
                   {day.type}
                 </span>
                 {day.pillar && (
@@ -121,17 +121,17 @@ export default async function PublicCalendarPage({
                   </span>
                 )}
               </div>
-              <p className="text-sm font-medium text-slate-200 mt-2 leading-tight">
+              <p className="text-sm font-medium text-neutral-200 mt-2 leading-tight">
                 {day.theme}
               </p>
-              <p className="text-xs text-slate-500 mt-1 italic leading-snug">
+              <p className="text-xs text-neutral-500 mt-1 italic leading-snug">
                 {day.hook}
               </p>
               <div className="mt-2 hidden group-hover:block">
-                <p className="text-xs text-slate-400 leading-snug border-t border-slate-800 pt-2">
+                <p className="text-xs text-neutral-400 leading-snug border-t border-neutral-800 pt-2">
                   {day.caption}
                 </p>
-                <p className="text-xs text-slate-600 mt-1 leading-snug">
+                <p className="text-xs text-neutral-600 mt-1 leading-snug">
                   {day.hashtags.slice(0, 4).join(" ")}
                 </p>
                 {day.story && (
@@ -145,17 +145,17 @@ export default async function PublicCalendarPage({
         </div>
 
         {lockedCount > 0 && (
-          <p className="mt-6 text-center text-slate-400 text-sm">
+          <p className="mt-6 text-center text-neutral-400 text-sm">
             🔒 + {lockedCount} dias no calendário completo
           </p>
         )}
 
-        <div className="mt-12 text-center bg-slate-900 border border-slate-800 rounded-2xl p-8">
+        <div className="mt-12 text-center bg-neutral-900 border border-neutral-800 rounded-2xl p-8">
           <p className="text-lg font-semibold mb-2">Quer um calendário assim para o seu negócio?</p>
-          <p className="text-slate-400 text-sm mb-6">Gerado por IA em 10 segundos. 1 calendário grátis, sem cartão.</p>
+          <p className="text-neutral-400 text-sm mb-6">Gerado por IA em 10 segundos. 1 calendário grátis, sem cartão.</p>
           <Link
             href="/"
-            className="bg-violet-600 hover:bg-violet-500 transition-colors px-8 py-3 rounded-xl font-semibold inline-block"
+            className="bg-rose-600 hover:bg-rose-500 transition-colors px-8 py-3 rounded-xl font-semibold inline-block"
           >
             Criar o meu grátis →
           </Link>

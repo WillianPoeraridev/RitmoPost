@@ -32,9 +32,9 @@ export default async function GerarPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/dashboard" className="text-xl font-bold text-violet-400">RitmoPost</Link>
-        <Link href="/dashboard" className="text-sm text-slate-400 hover:text-white transition-colors">
+      <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+        <Link href="/dashboard" className="text-xl font-bold text-rose-400">RitmoPost</Link>
+        <Link href="/dashboard" className="text-sm text-neutral-400 hover:text-white transition-colors">
           ← Meus calendários
         </Link>
       </nav>
@@ -43,7 +43,7 @@ export default async function GerarPage({
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">Gerar Calendário</h1>
-            <p className="text-slate-400 text-sm">
+            <p className="text-neutral-400 text-sm">
               A IA vai criar 30 dias de conteúdo personalizado para o seu negócio
             </p>
           </div>

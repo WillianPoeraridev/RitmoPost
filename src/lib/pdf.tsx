@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 10,
     borderBottomWidth: 2,
-    borderBottomColor: "#7c3aed",
+    borderBottomColor: "#f43f5e",
     borderBottomStyle: "solid",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     fontSize: 8,
-    color: "#7c3aed",
+    color: "#f43f5e",
     fontFamily: "Helvetica-Bold",
   },
   grid: {
@@ -159,16 +159,16 @@ const styles = StyleSheet.create({
   previewBanner: {
     marginBottom: 10,
     padding: 6,
-    backgroundColor: "#f5f3ff",
+    backgroundColor: "#fff1f2",
     borderWidth: 1,
-    borderColor: "#7c3aed",
+    borderColor: "#f43f5e",
     borderRadius: 4,
     textAlign: "center",
   },
   previewBannerText: {
     fontSize: 9,
     fontFamily: "Helvetica-Bold",
-    color: "#6d28d9",
+    color: "#be123c",
   },
   watermarkLayer: {
     position: "absolute",
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   watermarkText: {
     fontFamily: "Helvetica-Bold",
     fontSize: 30,
-    color: "#7c3aed",
+    color: "#f43f5e",
     opacity: 0.18,
     transform: "rotate(-20deg)",
   },
@@ -208,7 +208,7 @@ export function CalendarPdf({
   month,
   year,
   days,
-  primaryColor = "#7c3aed",
+  primaryColor = "#f43f5e",
   watermark = false,
   totalDays,
 }: Props) {

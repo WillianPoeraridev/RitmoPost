@@ -27,13 +27,13 @@ export default async function EditarPerfilPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/dashboard" className="text-xl font-bold text-violet-400">
+      <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+        <Link href="/dashboard" className="text-xl font-bold text-rose-400">
           RitmoPost
         </Link>
         <Link
           href="/perfil"
-          className="text-sm text-slate-400 hover:text-white transition-colors"
+          className="text-sm text-neutral-400 hover:text-white transition-colors"
         >
           ← Perfis
         </Link>
@@ -42,7 +42,7 @@ export default async function EditarPerfilPage({
       <div className="max-w-2xl mx-auto w-full px-6 py-10 flex-1">
         <div className="mb-8">
           <h1 className="text-2xl font-bold">Editar perfil</h1>
-          <p className="text-slate-400 text-sm mt-1">{profile.businessName}</p>
+          <p className="text-neutral-400 text-sm mt-1">{profile.businessName}</p>
         </div>
         <ProfileForm
           profileId={profile.id}
