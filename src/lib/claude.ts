@@ -280,7 +280,7 @@ Nicho: ${niche}
 == DISTRIBUICAO OBRIGATORIA ==
 - Pilares no mes: ~12 dias "atracao", ~12 dias "conexao", ~6 dias "conversao"
 - NUNCA dois dias seguidos de "conversao". Ancore "conversao" nas datas comemorativas e nas promocoes do perfil.
-- Os 5 primeiros dias do mes: somente "atracao" e "conexao" (primeiro constroi audiencia e confianca, depois convida)
+- Dias 1 a 5 do mes: use SOMENTE "atracao" ou "conexao". E PROIBIDO "conversao" nesses 5 primeiros dias (primeiro constroi audiencia e confianca, depois convida)
 - Formatos no mes: 12 Reels, 9 Carrossel, 6 Feed, 3 Story
 - Datas comemorativas do mes: ${holidays} — crie posts tematicos para elas
 - STORY DIARIO: alem do post, TODO dia tem o campo "story" com UMA ideia curta de Story (bastidor, enquete, pergunta, making-of) — e a camada diaria que mantem a audiencia aquecida
