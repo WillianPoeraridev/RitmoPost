@@ -11,7 +11,7 @@ export function WhatsAppButton({ days, businessName }: { days: CalendarDay[]; bu
       `_30 dias de posts prontos para o Instagram_ ✨`,
       "",
       ...days.map((d) =>
-        `*Dia ${d.day} — ${d.type}*\n📌 ${d.theme}\n💬 ${d.caption}\n${d.hashtags.join(" ")}`
+        `*Dia ${d.day} — ${d.type}*\n📌 ${d.theme}\n💬 ${d.caption}\n${d.hashtags.join(" ")}${d.story ? `\n📲 Story: ${d.story}` : ""}`
       ),
     ].join("\n\n");
 
