@@ -35,14 +35,20 @@ export async function POST(req: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_URL!;
 
-  const checkoutSession = await getStripe().checkout.sessions.create({
-    mode: "subscription",
-    line_items: [{ price: priceId, quantity: 1 }],
-    metadata: { userId: session.user.id, plan: parsed.data.plan },
-    customer_email: session.user.email,
-    success_url: `${baseUrl}/dashboard?success=true`,
-    cancel_url: `${baseUrl}/dashboard?canceled=true`,
-  });
+  let checkoutSession;
+  try {
+    checkoutSession = await getStripe().checkout.sessions.create({
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      metadata: { userId: session.user.id, plan: parsed.data.plan },
+      customer_email: session.user.email,
+      success_url: `${baseUrl}/dashboard?success=true`,
+      cancel_url: `${baseUrl}/dashboard?canceled=true`,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "stripe_error";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   return NextResponse.json({ url: checkoutSession.url });
 }
