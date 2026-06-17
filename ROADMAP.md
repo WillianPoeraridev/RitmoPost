@@ -3,7 +3,7 @@
 > O conteúdo do SEU negócio, entregue onde você vive (WhatsApp), sem nunca tocar na sua conta do Instagram.
 > Este arquivo é o documento vivo do produto — leia antes de qualquer mudança não-trivial.
 
-> ⚠️ **Domínio:** assumido `ritmopost.com.br` em código e docs. Se o TLD comprado for outro (`.app`, `.com`, etc.), é find-replace de 1 comando.
+> ⚠️ **Domínio:** `ritmopost.com.br` registrado (registro.br, NS `*.auto.dns.br`) e ligado ao projeto Vercel `postaja`. **PENDENTE: falta o registro DNS apontando pra Vercel** — sem ele o domínio dá `NXDOMAIN`. Ação (no painel.registro.br → Editar Zona DNS): `A` host vazio/`@` → `76.76.21.21`; `CNAME` host `www` → `cname.vercel-dns.com`. Enquanto isso o site roda pela URL `*.vercel.app`.
 
 ---
 
@@ -16,11 +16,29 @@
 | Dia | Foco | Status |
 |-----|------|--------|
 | **1** (12/06) | Fechar o free tier real (7 dias + PDF marca d'água) + rebrand RitmoPost + domínio | ✅ |
-| **2-3** (13-14/06) | **Perfil do Negócio** — cadastro rico (serviços, preços, tom, bairro) injetado no prompt | ✅ na branch `feat/perfil-negocio` — migration aplicada + QA E2E passou; falta só revisar e mergear |
+| **2-3** (13-14/06) | **Perfil do Negócio** — cadastro rico (serviços, preços, tom, bairro) injetado no prompt | ✅ **mergeado em produção** |
 | **4-5** (15-16/06) | **WhatsApp delivery** — post do dia às 8h no zap, legenda pronta pra copiar (Evolution API) | 🟡 lado do app pronto e testado com mock — falta só a VPS (decisão do Willian) |
-| **6** (17/06) | Qualidade — rodar geração nos 10 nichos com perfis fictícios reais, refinar prompts, validar Zod | ✅ antecipado — relatório em `qa/2026-06-13-qualidade-10-nichos.md` |
+| **6** (17/06) | Qualidade — rodar geração nos 10 nichos com perfis fictícios reais, refinar prompts, validar Zod | ✅ relatório em `qa/2026-06-13-qualidade-10-nichos.md` |
 | **7** (18-19/06) | QA do fluxo completo + gravar Reels da demo + montar lista de 50 leads no Instagram | ⏳ |
 | **20/06** | **PRIMEIRA DM.** | 🎯 |
+
+> 💡 **Além do plano original, entregue 15-17/06:** método **MoneyBranding** (cada post com pilar estratégico + story diário), **landing redesenhada** (Direção 4: dark + coral) e **tema coral aplicado no app inteiro**. Tudo em produção. Ver "Estado atual" abaixo.
+
+---
+
+## 📍 Estado atual (2026-06-17) — continuar de casa
+
+**No ar em produção** (deploy manual via `vercel --prod`; o webhook GitHub→Vercel foi reconectado após o rename do repo POSTAJA→RitmoPost, então push em `main` volta a deployar sozinho):
+
+- ✅ **Método MoneyBranding** — cada post tem `pillar` (atração/conexão/conversão) + `story` diário. Calendário virou um plano de 30 dias com ritmo. Validado nos 10 nichos (`qa/run-moneybranding-10.mts`). Único ajuste determinístico que cola via prompt: proibir conversão nos dias 1-5 (tamanho de legenda e refs locais são variância do haiku).
+- ✅ **Landing nova + tema coral no app inteiro** — Direção 4: base `neutral` (era slate), acento coral `rose→orange` (era roxo), em UI, PDF e emails. Cores de tipo de post (Reels=violeta) e de pilar são taxonomia e foram preservadas.
+- ✅ **Preço anual** ajustado pra **R$269/ano · "3 meses grátis"** na UI (era R$239). Coerência: R$29,90×9 = R$269,10.
+
+**Pendências pra fechar de casa (em ordem):**
+1. **DNS** — adicionar o registro `A 76.76.21.21` (e `CNAME www → cname.vercel-dns.com`) no registro.br. É o que falta pro `ritmopost.com.br` abrir (hoje dá NXDOMAIN). Ver nota de Domínio no topo.
+2. **Stripe** — ainda **não há conta Stripe nem assinantes**. Quando criar: criar o Price **anual de R$269** (Prices são imutáveis) e setar `STRIPE_PRICE_ID_YEARLY` na Vercel. A UI já mostra R$269.
+3. **VPS do WhatsApp** (Hetzner) — subir Evolution, conectar número, setar `EVOLUTION_*` + `CRON_SECRET` na Vercel. Sem isso o cron diário só faz `skipped`.
+4. **Dia 7** — QA do fluxo completo + gravar Reels da demo + lista de 50 leads.
 
 ---
 
@@ -70,7 +88,7 @@ A "fraqueza" de não agendar virou o **diferencial defensivo**. E mata de vez a 
 |-------|-------|--------------|
 | **Free** | Grátis | 7 dias visíveis + PDF com marca d'água agressiva (demo do produto) |
 | **Pro Mensal** | R$29,90/mês | 30 dias completos, PDF limpo, histórico 12 meses, WhatsApp delivery |
-| **Pro Anual** | R$239/ano | Tudo do Pro + "economize 2 meses" (~R$19,90/mês) |
+| **Pro Anual** | R$269/ano | Tudo do Pro + "3 meses grátis" (~R$22,40/mês). UI atualizada; **falta criar o Price no Stripe** |
 
 **Ancoragem futura:**
 - Agência (Fase 3): R$89,90/mês — gerencia até 10 negócios
@@ -150,15 +168,19 @@ year: integer
 content: jsonb              // Array de 30 dias (ver abaixo)
 created_at
 
-// Estrutura do content (jsonb) — NÃO mudar o formato:
+// Estrutura do content (jsonb) — NÃO mudar o formato base:
 [{
   day: 1,
   type: "Reels" | "Carrossel" | "Story" | "Feed",
+  pillar?: "atracao" | "conexao" | "conversao",   // método MoneyBranding (opcional, jsonb = sem migration)
   theme: "Antes e Depois do Degradê",
   hook: "Esse corte mudou tudo 🔥",
   caption: "Transformação real aqui na Barbearia do Zé. Combo corte+barba R$50. Agende: [link]",
-  hashtags: ["#barbearia", "#degradê", "#cortedecabelo"]
+  hashtags: ["#barbearia", "#degradê", "#cortedecabelo"],
+  story?: "Enquete: você chega de surpresa ou avisa no zap?"   // story diário (opcional)
 }]
+// pillar/story são opcionais: calendários antigos seguem abrindo. Pilar é normalizado
+// no Zod (aceita "Atenção"/"Confiança"/etc.) pra nunca derrubar a geração.
 ```
 
 ---
@@ -260,6 +282,9 @@ Core loop: gerar → ver → baixar PDF → pagar.
 - [x] **Qualidade (dia 6)** — ✅ antecipado: 10 nichos gerados com perfis fictícios (Zod 10/10, promo citada 10/10, preços em 12-26 dias/30), 4 desvios sistemáticos achados e corrigidos no prompt (hashtags <6, legendas longas, poucos Reels, poucas refs locais), re-teste nos 5 piores nichos confirmou a melhora (legendas longas 23→2, hashtags <6 ~26→4 dias). Relatório completo: `qa/2026-06-13-qualidade-10-nichos.md`. Harness reutilizável em `qa/`.
 - [ ] **QA + lançamento (dia 7)** — fluxo completo (cadastro → perfil → gerar → PDF → pagar → WhatsApp), Reels da demo, lista de 50 leads
 - [x] **Sequência de emails D+3, D+7, D+20, D+28 + notificação D+25** — `src/lib/email.ts` (templates + layout compartilhado, welcome refatorado pra usar), cron `/api/cron/retention-emails` (12h UTC via `vercel.json`, `CRON_SECRET`), coluna `user.sent_emails` (migration aplicada) anti-reenvio, janela [dia, dia+2] que evita disparo retroativo pra cadastros antigos. Testado com dry-run (7 idades semeadas → marcos certos, dedupe e auth ok). **Entrega real depende do domínio verificado no Resend** (sandbox só envia pro dono da conta).
+
+- [x] **Método MoneyBranding (15/06)** — cada post com pilar estratégico (atração/conexão/conversão) + story diário; calendário virou plano com ritmo. Prompt reescrito, campos opcionais no `CalendarDay`, surfaçado no grid/PDF/link público/WhatsApp. QA nos 10 nichos (`qa/run-moneybranding-10.mts`): pilares no alvo, story 30/30, sem regressão. Origem: `ref/moneybranding.txt` (d'demarco).
+- [x] **Landing redesenhada + tema coral (15-16/06)** — Direção 4 (dark neutral + coral rose→orange) aplicada na landing e no app inteiro (UI, PDF, emails). Landing = página de confirmação pra comprador aquecido (curta, confiante, sem comparar/justificar). Hero split com preview + seção "como funciona" em steps. Preço anual → R$269/"3 meses grátis".
 
 ### Fase 3 — 90 a 180 Dias
 
@@ -402,4 +427,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-13 (madrugada, Claude autônomo) — Noite rendeu 3 itens do sprint: (1) Perfil do Negócio FECHADO (migration + QA E2E); (2) WhatsApp delivery com o lado do app PRONTO e testado com mock — falta só a VPS; (3) dia 6 de Qualidade ANTECIPADO: 10 nichos testados, prompt refinado, re-teste validou. Pendente do Willian: revisar/mergear a branch `feat/perfil-negocio`, contratar a VPS Hetzner e configurar EVOLUTION_*/CRON_SECRET na Vercel. Restam do sprint: plugar a VPS, QA final + Reels da demo + lista de leads (dia 7).*
+*Última atualização: 2026-06-17 — Entregue: método MoneyBranding (pilar + story diário, QA 10 nichos), landing redesenhada (Direção 4 dark+coral) e tema coral no app inteiro (UI/PDF/emails), preço anual → R$269. Tudo em produção (deploy manual `vercel --prod`; webhook reconectado após rename POSTAJA→RitmoPost; remote git corrigido). Pendente pra fechar de casa: (1) registro DNS `A 76.76.21.21` no registro.br pro domínio abrir; (2) criar Stripe + Price anual R$269; (3) VPS Hetzner do WhatsApp; (4) dia 7 (QA fluxo + Reels demo + 50 leads). Ver "Estado atual" no topo.*
