@@ -6,6 +6,7 @@ import Link from "next/link";
 const NICHO_SUGGESTIONS = [
   "Barbearia", "Salão de Beleza", "Estética", "Personal Trainer",
   "Lanchonete", "Pizzaria", "Açaí", "Fotografia", "Pet Shop", "Clínica",
+  "SaaS", "Marketing Digital", "Negócios Digitais", "Infoproduto", "Criação de Conteúdo",
 ];
 
 const MONTH_NAMES = [
@@ -52,6 +53,8 @@ export function GerarForm({
   const [manualMode, setManualMode] = useState(!hasProfiles);
   const [niche, setNiche] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [city, setCity] = useState("");
+  const [differentials, setDifferentials] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -62,7 +65,7 @@ export function GerarForm({
     setLoading(true);
 
     const body = manualMode
-      ? { niche, businessName, month: selectedMonth.month, year: selectedMonth.year }
+      ? { niche, businessName, city: city || undefined, differentials: differentials || undefined, month: selectedMonth.month, year: selectedMonth.year }
       : { profileId: selectedProfileId, month: selectedMonth.month, year: selectedMonth.year };
 
     const res = await fetch("/api/generate", {
@@ -77,6 +80,12 @@ export function GerarForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan: "monthly" }),
       });
+      if (!checkoutRes.ok) {
+        const data = await checkoutRes.json().catch(() => ({}));
+        setError(data.error ?? "Erro ao iniciar checkout. Tente novamente.");
+        setLoading(false);
+        return;
+      }
       const { url } = await checkoutRes.json();
       window.location.href = url;
       return;
@@ -142,9 +151,9 @@ export function GerarForm({
             <button
               type="button"
               onClick={() => setManualMode(true)}
-              className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="text-xs text-neutral-600 hover:text-neutral-400 transition-colors"
             >
-              Gerar sem perfil
+              Gerar sem perfil (genérico)
             </button>
           </div>
         </div>
@@ -160,9 +169,21 @@ export function GerarForm({
             </button>
           )}
           {!hasProfiles && (
-            <div className="bg-rose-900/20 border border-rose-700/40 text-sm text-neutral-300 px-4 py-3 rounded-lg">
-              💡 <Link href="/perfil/novo" className="text-rose-400 hover:underline">Cadastre o perfil do seu negócio</Link>{" "}
-              e os posts saem citando seus serviços, preços e bairro.
+            <div className="space-y-3">
+              <Link
+                href="/perfil/novo"
+                className="flex flex-col w-full bg-rose-600/20 border border-rose-500/60 hover:border-rose-400 hover:bg-rose-600/30 transition-colors px-4 py-4 rounded-xl text-left"
+              >
+                <span className="font-semibold text-rose-300 text-sm">Criar perfil do negócio →</span>
+                <span className="text-xs text-neutral-400 mt-0.5">Posts saem com seus serviços, preços e bairro. 2 minutos de setup.</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => {}}
+                className="text-xs text-neutral-500 hover:text-neutral-400 transition-colors w-full text-center"
+              >
+                ou continuar sem perfil (calendário genérico)
+              </button>
             </div>
           )}
           <div>
@@ -198,6 +219,32 @@ export function GerarForm({
               onChange={(e) => setBusinessName(e.target.value)}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
               placeholder="Ex: Barbearia do Zé, Studio Ana..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-neutral-400 mb-1">
+              Cidade / Bairro <span className="text-neutral-600">(opcional)</span>
+            </label>
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
+              placeholder="Ex: Tramandaí, Bairro Centro..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-neutral-400 mb-1">
+              Diferencial do negócio <span className="text-neutral-600">(opcional)</span>
+            </label>
+            <input
+              type="text"
+              value={differentials}
+              onChange={(e) => setDifferentials(e.target.value)}
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
+              placeholder="Ex: Atendimento domiciliar, só produtos veganos..."
             />
           </div>
         </>

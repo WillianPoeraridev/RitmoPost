@@ -97,7 +97,7 @@ export default async function DashboardPage({
           <div className="flex items-center gap-3">
             <Link
               href="/perfil"
-              className="text-xs text-neutral-400 hover:text-white border border-neutral-700 hover:border-neutral-600 px-3 py-2 rounded-lg transition-colors"
+              className="text-sm text-neutral-300 hover:text-white border border-neutral-600 hover:border-neutral-500 px-4 py-2.5 rounded-xl transition-colors font-medium"
             >
               Perfis do negócio
             </Link>

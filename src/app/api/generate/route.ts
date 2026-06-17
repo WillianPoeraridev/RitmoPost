@@ -16,6 +16,8 @@ const bodySchema = z.object({
   profileId: z.string().uuid().optional(),
   niche: z.string().min(1).max(100).optional(),
   businessName: z.string().min(1).max(100).optional(),
+  city: z.string().max(100).optional(),
+  differentials: z.string().max(300).optional(),
   month: z.number().int().min(1).max(12).optional(),
   year: z.number().int().min(2024).max(2030).optional(),
 });
@@ -80,6 +82,13 @@ export async function POST(req: NextRequest) {
 
   if (!niche || !businessName) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+
+  if (!parsed.data.profileId && (parsed.data.city || parsed.data.differentials)) {
+    profileContext = {
+      city: parsed.data.city,
+      differentials: parsed.data.differentials,
+    };
   }
 
   const now = new Date();
