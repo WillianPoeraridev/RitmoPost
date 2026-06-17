@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { CalendarDay, ContentPillar } from "@/lib/schema";
 import { PILLAR_LABELS } from "@/lib/schema";
+import { getPostingTime } from "@/lib/posting-times";
 
 const TYPE_COLORS: Record<string, string> = {
   Reels: "bg-violet-600",
@@ -20,11 +21,14 @@ const PILLAR_COLORS: Record<ContentPillar, string> = {
 export function DayCard({
   day,
   calendarId,
+  niche,
 }: {
   day: CalendarDay;
   calendarId: string;
+  niche: string;
 }) {
   const [current, setCurrent] = useState(day);
+  const postingTime = getPostingTime(niche, current.type);
   const [regenerating, setRegenerating] = useState(false);
   const [script, setScript] = useState<string | null>(null);
   const [loadingScript, setLoadingScript] = useState(false);
@@ -115,6 +119,10 @@ export function DayCard({
             <span className="font-semibold">📲 Story de hoje:</span> {current.story}
           </p>
         )}
+
+        <p className="text-xs text-neutral-500 mt-2 leading-snug border-t border-neutral-800 pt-2">
+          🕐 <span className="text-neutral-300 font-medium">{postingTime.time}</span> · {postingTime.reason}
+        </p>
 
         {current.type === "Reels" && (
           <button

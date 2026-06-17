@@ -138,7 +138,7 @@ export default async function CalendarioPage({
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {visibleDays.map((day) => (
-            <DayCard key={day.day} day={day} calendarId={id} />
+            <DayCard key={day.day} day={day} calendarId={id} niche={cal.niche} />
           ))}
           {/* Locked teasers — show the day exists, hide the real content */}
           {lockedDays.map((day) => (
