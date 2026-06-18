@@ -3,7 +3,7 @@
 > O conteúdo do SEU negócio, entregue onde você vive (WhatsApp), sem nunca tocar na sua conta do Instagram.
 > Este arquivo é o documento vivo do produto — leia antes de qualquer mudança não-trivial.
 
-> ⚠️ **Domínio:** `ritmopost.com.br` registrado (registro.br, NS `*.auto.dns.br`) e ligado ao projeto Vercel `postaja`. **PENDENTE: falta o registro DNS apontando pra Vercel** — sem ele o domínio dá `NXDOMAIN`. Ação (no painel.registro.br → Editar Zona DNS): `A` host vazio/`@` → `76.76.21.21`; `CNAME` host `www` → `cname.vercel-dns.com`. Enquanto isso o site roda pela URL `*.vercel.app`.
+> ✅ **Domínio no ar (18/06/2026):** `ritmopost.com.br` (registro.br, NS `*.auto.dns.br`) ligado ao projeto Vercel `postaja` e resolvendo. Zona DNS publicada: `A @ → 76.76.21.21` + `CNAME www → cname.vercel-dns.com`. `https://ritmopost.com.br` responde HTTP 200 com SSL válido; `http://` faz 308 → HTTPS. O apex é o domínio canônico (bate com `BETTER_AUTH_URL`); `www` deve redirecionar pro apex (adicionar como domínio separado na Vercel, ainda pendente e não-bloqueante).
 
 ---
 
@@ -35,7 +35,7 @@
 - ✅ **Preço anual** ajustado pra **R$269/ano · "3 meses grátis"** na UI (era R$239). Coerência: R$29,90×9 = R$269,10.
 
 **Pendências pra fechar de casa (em ordem):**
-1. **DNS** — adicionar o registro `A 76.76.21.21` (e `CNAME www → cname.vercel-dns.com`) no registro.br. É o que falta pro `ritmopost.com.br` abrir (hoje dá NXDOMAIN). Ver nota de Domínio no topo.
+1. ~~**DNS** — adicionar o registro `A 76.76.21.21` (e `CNAME www → cname.vercel-dns.com`) no registro.br.~~ ✅ **Feito (18/06).** `ritmopost.com.br` abre com SSL. Falta só adicionar o `www` como domínio separado na Vercel com redirect 308 pro apex (não-bloqueante).
 2. **Stripe** — ainda **não há conta Stripe nem assinantes**. Quando criar: criar o Price **anual de R$269** (Prices são imutáveis) e setar `STRIPE_PRICE_ID_YEARLY` na Vercel. A UI já mostra R$269.
 3. **VPS do WhatsApp** (Hetzner) — subir Evolution, conectar número, setar `EVOLUTION_*` + `CRON_SECRET` na Vercel. Sem isso o cron diário só faz `skipped`.
 4. **Dia 7** — QA do fluxo completo + gravar Reels da demo + lista de 50 leads.
