@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import type { CalendarDay, ContentPillar } from "@/lib/schema";
 import { PILLAR_LABELS } from "@/lib/schema";
 import { getPostingTime } from "@/lib/posting-times";
@@ -123,6 +124,16 @@ export function DayCard({
         <p className="text-xs text-neutral-500 mt-2 leading-snug border-t border-neutral-800 pt-2">
           🕐 <span className="text-neutral-300 font-medium">{postingTime.time}</span> · {postingTime.reason}
         </p>
+
+        <Link
+          href={`/calendario/${calendarId}/carousel/${current.day}`}
+          className="mt-2 w-full text-xs bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-neutral-200 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a2 2 0 012-2h8a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5z M18 7h1a2 2 0 012 2v8a2 2 0 01-2 2h-1" />
+          </svg>
+          Gerar carrossel
+        </Link>
 
         {current.type === "Reels" && (
           <button

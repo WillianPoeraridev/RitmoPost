@@ -289,12 +289,37 @@ Core loop: gerar → ver → baixar PDF → pagar.
 ### Fase 3 — 90 a 180 Dias
 
 - [ ] ~~Integração Meta Business Suite~~ — **MORTA por decisão estratégica.** Não integramos na conta do cliente: é o nosso diferencial defensivo. Nunca.
-- [ ] Gerador de arte básica (fundo + texto + logo via Canvas API)
+- [x] **Gerador de carrossel (motor)** — arte pronta pra postar via render determinístico (`next/og`/Satori), não difusão. Cor de marca (6 cores, iguais às do PDF) + tema dark/light, custo zero de token. Ver seção "Gerador de Carrossel" abaixo. **Falta pro cliente:** persistir cor/tema no perfil, logo (storage), gate Pro.
 - [ ] White-label para agências
-- [ ] Upload de logo no PDF (requer S3/R2)
+- [ ] Upload de logo (no PDF e no carrossel — requer S3/R2)
 - [ ] API pública
 
 ---
+
+## Gerador de Carrossel (arte pronta pra postar) — 2026-06-22
+
+O salto de "ideia em PDF" pra "post pronto em 30s". Hoje a IA entrega hook+legenda+hashtags; o dono ainda tinha que **montar** a arte (o 80% da dor). Agora o RitmoPost entrega o carrossel renderizado, on-brand.
+
+### Decisão de arquitetura (por que NÃO usamos IA de imagem)
+
+Render **determinístico** (`next/og` → Satori → PNG), não difusão. Pesquisa de modelos (Ideogram/Recraft/nano-banana/GPT-image) confirmou que difusão quebra em 4 pontos pro nosso caso: (1) consistência entre slides, (2) texto PT-BR legível, (3) cor de marca exata, (4) custo (~$0,05+/slide vs ~R$0). As ferramentas sérias (PostNitro, Predis) também usam template+brand-kit por baixo, não geram o slide com IA. **A IA já escreveu o conteúdo uma vez (na geração do calendário); o carrossel só desenha em cima — zero token, zero chamada de modelo.**
+
+### O que está pronto (funcional ponta a ponta)
+
+- **Motor** (`src/lib/carousel.tsx`): deriva os slides de um `CalendarDay` (capa → conteúdo → CTA, quebrando a legenda em frases; CTA detectado ou padrão por pilar). 3 templates JSX, 1080×1350 (4:5).
+- **Cor de marca + tema**: `resolvePalette(color, theme)` deriva paleta inteira de 1 hex com **contraste garantido** (cor escura ou tema claro nunca saem ilegíveis). 6 cores iguais às do PDF + toggle dark/light. Sem color picker cru (protege a promessa "profissional").
+- **Pilar virou rótulo**, não cor — no artefato público quem manda é a marca do cliente. A cor do pilar (MoneyBranding) segue no grid/PDF (planejamento).
+- **Rota** `GET /api/carousel?id&day&slide&color&theme` (auth + dono) → PNG. Fontes Inter (woff latin) em `assets/fonts/`.
+- **UI**: botão "Gerar carrossel" no `DayCard` → página `/calendario/[id]/carousel/[day]` com estúdio (`carousel-studio.tsx`): seletor de cor/tema ao vivo + grid + "Baixar todos" (`carousel-download.tsx`, baixa PNG por PNG na ordem).
+- Verificado renderizando PNG real (dark/coral, light/coral, dark/navy, light/teal) — acentos PT-BR perfeitos, contraste OK em todos.
+
+### O que falta (pra virar produto pro cliente — Passo 2)
+
+- [ ] **Persistir cor/tema no perfil do negócio** — hoje é escolha por sessão (igual o PDF). Coluna nova em `business_profiles` + ler na rota, pra cada negócio "lembrar" a marca.
+- [ ] **Logo do cliente no slide** — requer storage (Cloudflare R2/S3). É o único bloqueio real; pra uso próprio, logo entraria como asset fixo.
+- [ ] **Gate por plano Pro** no botão "Gerar carrossel" (hoje liberado pra qualquer logado — ok pra fase de case próprio).
+- [ ] **Densidade de slides** (opcional): hoje 1 frase da legenda = 1 slide (3–5 no total). Carrossel de 7–10 slides com conteúdo de verdade exigiria **1** chamada de IA por carrossel pra expandir o tema (~R$0,001) — o único ponto que voltaria a custar token.
+- [ ] Capa com imagem de fundo opcional (aí sim difusão via nano-banana no OpenRouter, ~$0,05) — só onde foto agrega.
 
 ## Arquitetura WhatsApp Delivery (dias 4-5)
 
@@ -427,4 +452,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-17 — Entregue: método MoneyBranding (pilar + story diário, QA 10 nichos), landing redesenhada (Direção 4 dark+coral) e tema coral no app inteiro (UI/PDF/emails), preço anual → R$269. Tudo em produção (deploy manual `vercel --prod`; webhook reconectado após rename POSTAJA→RitmoPost; remote git corrigido). Pendente pra fechar de casa: (1) registro DNS `A 76.76.21.21` no registro.br pro domínio abrir; (2) criar Stripe + Price anual R$269; (3) VPS Hetzner do WhatsApp; (4) dia 7 (QA fluxo + Reels demo + 50 leads). Ver "Estado atual" no topo.*
+*Última atualização: 2026-06-22 — Entregue: **gerador de carrossel** (arte pronta pra postar, render determinístico `next/og`/Satori, cor de marca + tema dark/light, custo zero de token) — ver seção "Gerador de Carrossel". Pendente do carrossel: persistir cor/tema no perfil, logo (storage R2), gate Pro. Banco de usuários de teste zerado nesta sessão. Anterior (2026-06-17): método MoneyBranding (pilar + story diário, QA 10 nichos), landing redesenhada (Direção 4 dark+coral) e tema coral no app inteiro, preço anual → R$269. Pendente pra fechar de casa: (1) ~~DNS~~ ✅; (2) criar Stripe + Price anual R$269; (3) VPS Hetzner do WhatsApp; (4) dia 7 (QA fluxo + Reels demo + 50 leads). Ver "Estado atual" no topo.*
