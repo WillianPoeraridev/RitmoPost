@@ -57,6 +57,7 @@ export default async function EditarPerfilPage({
             recurringPromos: profile.recurringPromos,
             instagramHandle: profile.instagramHandle,
           }}
+          initialLogoUrl={profile.logoUrl}
         />
       </div>
     </div>

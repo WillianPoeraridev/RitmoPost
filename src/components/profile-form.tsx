@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BusinessService, BusinessTone } from "@/lib/schema";
+import { LogoUpload } from "@/components/logo-upload";
 
 const NICHO_SUGGESTIONS = [
   "Barbearia", "Salão de Beleza", "Estética", "Personal Trainer",
@@ -32,9 +33,11 @@ const inputClass =
 export function ProfileForm({
   profileId,
   initial,
+  initialLogoUrl,
 }: {
   profileId?: string;
   initial?: ProfileFormData;
+  initialLogoUrl?: string | null;
 }) {
   const router = useRouter();
   const [businessName, setBusinessName] = useState(initial?.businessName ?? "");
@@ -283,6 +286,16 @@ export function ProfileForm({
           />
         </div>
       </div>
+
+      {profileId ? (
+        <div className="border-t border-neutral-800 pt-5">
+          <LogoUpload profileId={profileId} initialLogoUrl={initialLogoUrl} />
+        </div>
+      ) : (
+        <p className="text-xs text-neutral-600 border-t border-neutral-800 pt-5">
+          📷 A logo pode ser enviada depois de criar o perfil — ela aparece nos carrosséis.
+        </p>
+      )}
 
       <div className="flex items-center justify-between pt-2">
         {profileId ? (

@@ -37,6 +37,7 @@ export default async function CalendarioPage({
     .limit(1);
 
   if (!cal) notFound();
+  const profileId = cal.profileId ?? null;
 
   const [dbUser] = await db
     .select()
@@ -55,12 +56,22 @@ export default async function CalendarioPage({
         <Link href="/dashboard" className="text-xl font-bold text-rose-400">
           RitmoPost
         </Link>
-        <Link
-          href="/dashboard"
-          className="text-sm text-neutral-400 hover:text-white transition-colors"
-        >
-          ← Meus calendários
-        </Link>
+        <div className="flex items-center gap-4">
+          {profileId && (
+            <Link
+              href={`/perfil/${profileId}`}
+              className="text-sm text-neutral-500 hover:text-rose-400 transition-colors"
+            >
+              Editar perfil
+            </Link>
+          )}
+          <Link
+            href="/dashboard"
+            className="text-sm text-neutral-400 hover:text-white transition-colors"
+          >
+            ← Meus calendários
+          </Link>
+        </div>
       </nav>
 
       <div className="max-w-6xl mx-auto w-full px-6 py-10">

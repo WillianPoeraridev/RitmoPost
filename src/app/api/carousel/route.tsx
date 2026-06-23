@@ -54,18 +54,20 @@ export async function GET(req: NextRequest) {
   const dayData = (cal.content as CalendarDay[]).find((d) => d.day === day);
   if (!dayData) return new Response("Day not found", { status: 404 });
 
-  // Handle do Instagram vem do perfil, quando o calendário foi gerado por um.
+  // Handle e logo vêm do perfil, quando o calendário foi gerado por um.
   let handle: string | undefined;
+  let logoUrl: string | null = null;
   if (cal.profileId) {
     const [profile] = await db
-      .select({ handle: businessProfile.instagramHandle })
+      .select({ handle: businessProfile.instagramHandle, logoUrl: businessProfile.logoUrl })
       .from(businessProfile)
       .where(eq(businessProfile.id, cal.profileId))
       .limit(1);
     handle = profile?.handle ?? undefined;
+    logoUrl = profile?.logoUrl ?? null;
   }
 
-  const brand = { businessName: cal.businessName, handle };
+  const brand = { businessName: cal.businessName, handle, logoUrl };
   const slides = buildCarousel(dayData, brand);
   if (slideIndex < 0 || slideIndex >= slides.length) {
     return new Response("Slide out of range", { status: 404 });

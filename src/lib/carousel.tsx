@@ -101,6 +101,8 @@ export type Brand = {
   businessName: string;
   /** sem o @ — adicionado na renderização */
   handle?: string;
+  /** URL pública da logo (R2). next/og busca a imagem ao renderizar. */
+  logoUrl?: string | null;
 };
 
 export type Slide =
@@ -211,6 +213,14 @@ export function SlideView({
     <div style={{ display: "flex", width: 96, height: 12, borderRadius: 8, backgroundColor: p.accent }} />
   );
 
+  // Logo do cliente (R2), quando houver. next/og infere as dimensões da imagem.
+  const logo = brand.logoUrl ? (
+    <div style={{ display: "flex", height: 64, alignItems: "center" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={brand.logoUrl} height={64} style={{ height: 64, objectFit: "contain" }} alt="" />
+    </div>
+  ) : null;
+
   // Rodapé de marca compartilhado por slides de conteúdo/CTA.
   const footer = (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
@@ -224,29 +234,32 @@ export function SlideView({
   if (slide.kind === "cover") {
     return (
       <div style={root}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {slide.pillarLabel ? (
-            <div
-              style={{
-                display: "flex",
-                fontSize: 26,
-                fontWeight: 800,
-                textTransform: "uppercase",
-                letterSpacing: 2,
-                color: p.onAccent,
-                backgroundColor: p.accent,
-                padding: "10px 22px",
-                borderRadius: 999,
-              }}
-            >
-              {slide.pillarLabel}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {slide.pillarLabel ? (
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 26,
+                  fontWeight: 800,
+                  textTransform: "uppercase",
+                  letterSpacing: 2,
+                  color: p.onAccent,
+                  backgroundColor: p.accent,
+                  padding: "10px 22px",
+                  borderRadius: 999,
+                }}
+              >
+                {slide.pillarLabel}
+              </div>
+            ) : (
+              accentBar
+            )}
+            <div style={{ display: "flex", fontSize: 26, fontWeight: 600, color: p.muted, letterSpacing: 2, textTransform: "uppercase" }}>
+              {slide.type}
             </div>
-          ) : (
-            accentBar
-          )}
-          <div style={{ display: "flex", fontSize: 26, fontWeight: 600, color: p.muted, letterSpacing: 2, textTransform: "uppercase" }}>
-            {slide.type}
           </div>
+          {logo}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
@@ -287,7 +300,10 @@ export function SlideView({
   // cta
   return (
     <div style={{ ...root, backgroundImage: `linear-gradient(155deg, ${p.ink} 0%, ${p.bg} 60%)` }}>
-      <div style={{ display: "flex" }}>{accentBar}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+        {accentBar}
+        {logo}
+      </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
         <div style={{ display: "flex", fontSize: 26, fontWeight: 600, color: p.muted, letterSpacing: 3, textTransform: "uppercase" }}>
           é com você

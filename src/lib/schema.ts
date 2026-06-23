@@ -81,6 +81,8 @@ export const businessProfile = pgTable("business_profiles", {
   neighborhood: text("neighborhood").notNull().default(""),
   recurringPromos: text("recurring_promos"),
   instagramHandle: text("instagram_handle"),
+  // URL pública da logo no R2 — renderizada nos carrosséis. Nullable: perfil sem logo continua válido.
+  logoUrl: text("logo_url"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });

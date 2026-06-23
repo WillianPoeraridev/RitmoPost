@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { calendar, user } from "@/lib/schema";
+import { calendar, user, businessProfile } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -22,6 +22,14 @@ type CalendarRow = {
   year: number;
   content: unknown[];
   createdAt: Date;
+};
+
+type ProfileRow = {
+  id: string;
+  businessName: string;
+  niche: string;
+  instagramHandle: string | null;
+  logoUrl: string | null;
 };
 
 function groupByBusiness(calendars: CalendarRow[]) {
@@ -51,15 +59,33 @@ export default async function DashboardPage({
     .where(eq(user.id, session.user.id))
     .limit(1);
 
-  const calendars = await db
-    .select()
-    .from(calendar)
-    .where(eq(calendar.userId, session.user.id))
-    .orderBy(desc(calendar.createdAt));
+  const [calendars, profiles] = await Promise.all([
+    db
+      .select()
+      .from(calendar)
+      .where(eq(calendar.userId, session.user.id))
+      .orderBy(desc(calendar.createdAt)),
+    db
+      .select({
+        id: businessProfile.id,
+        businessName: businessProfile.businessName,
+        niche: businessProfile.niche,
+        instagramHandle: businessProfile.instagramHandle,
+        logoUrl: businessProfile.logoUrl,
+      })
+      .from(businessProfile)
+      .where(eq(businessProfile.userId, session.user.id))
+      .orderBy(desc(businessProfile.createdAt)),
+  ]);
 
   const isPro = dbUser?.plan === "pro";
   const generationsUsed = dbUser?.generationsUsed ?? 0;
   const grouped = groupByBusiness(calendars as CalendarRow[]);
+  const mainProfile = (profiles as ProfileRow[])[0] ?? null;
+  const multiProfile = profiles.length > 1;
+  const generateHref = mainProfile
+    ? `/gerar?perfil=${mainProfile.id}`
+    : "/gerar";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -85,38 +111,61 @@ export default async function DashboardPage({
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold">Meus Calendários</h1>
-            <p className="text-neutral-400 text-sm mt-1">
-              {isPro
-                ? "Gerações ilimitadas no plano Pro"
-                : `${generationsUsed}/1 geração usada no plano grátis`}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
+        {/* ── Perfil do negócio ── sempre no topo */}
+        {profiles.length === 0 ? (
+          <div className="mb-8 rounded-2xl border border-rose-700/40 bg-gradient-to-r from-rose-900/20 to-neutral-900 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold text-white text-lg">Configure o perfil do seu negócio</p>
+              <p className="text-sm text-neutral-400 mt-1">
+                O calendário sai com seus serviços, preços e tom de voz — mas precisamos conhecer seu negócio primeiro
+              </p>
+            </div>
             <Link
-              href="/perfil"
-              className="text-sm text-neutral-300 hover:text-white border border-neutral-600 hover:border-neutral-500 px-4 py-2.5 rounded-xl transition-colors font-medium"
+              href="/perfil/novo"
+              className="shrink-0 bg-rose-600 hover:bg-rose-500 transition-colors px-6 py-3 rounded-xl font-semibold text-sm"
             >
-              Perfis do negócio
+              Criar perfil →
             </Link>
-            {calendars.length > 0 && (
+          </div>
+        ) : (
+          <div className="mb-8 bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 min-w-0">
+              {mainProfile?.logoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={mainProfile.logoUrl}
+                  alt=""
+                  className="w-12 h-12 object-contain rounded-lg bg-neutral-800 shrink-0"
+                />
+              )}
+              <div className="min-w-0">
+                <p className="font-semibold truncate">{mainProfile?.businessName}</p>
+                <p className="text-sm text-neutral-400 truncate">
+                  {mainProfile?.niche}
+                  {mainProfile?.instagramHandle ? ` · ${mainProfile.instagramHandle}` : ""}
+                  {multiProfile ? ` · ${profiles.length} negócios` : ""}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              {multiProfile ? (
+                <Link href="/perfil" className="text-sm text-neutral-400 hover:text-white transition-colors">
+                  Gerenciar →
+                </Link>
+              ) : (
+                <Link href={`/perfil/${mainProfile?.id}`} className="text-sm text-neutral-400 hover:text-white transition-colors">
+                  Editar perfil
+                </Link>
+              )}
               <Link
-                href={agencyMode ? "/dashboard" : "/dashboard?view=agencia"}
-                className="text-xs text-neutral-400 hover:text-white border border-neutral-700 hover:border-neutral-600 px-3 py-2 rounded-lg transition-colors"
+                href={generateHref}
+                className="text-sm bg-rose-600 hover:bg-rose-500 transition-colors px-4 py-2 rounded-lg font-medium"
               >
-                {agencyMode ? "Vista lista" : "Vista agência"}
+                + Novo calendário
               </Link>
-            )}
-            <Link
-              href="/gerar"
-              className="bg-rose-600 hover:bg-rose-500 transition-colors px-5 py-2.5 rounded-xl font-medium text-sm"
-            >
-              + Novo calendário
-            </Link>
+            </div>
           </div>
-        </div>
+        )}
 
         {isPro && (
           <WhatsAppSettings
@@ -137,17 +186,33 @@ export default async function DashboardPage({
           </div>
         )}
 
+        {/* ── Calendários ── */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Meus Calendários</h2>
+          <div className="flex items-center gap-2">
+            {calendars.length > 0 && (
+              <Link
+                href={agencyMode ? "/dashboard" : "/dashboard?view=agencia"}
+                className="text-xs text-neutral-400 hover:text-white border border-neutral-700 hover:border-neutral-600 px-3 py-2 rounded-lg transition-colors"
+              >
+                {agencyMode ? "Vista lista" : "Vista agência"}
+              </Link>
+            )}
+          </div>
+        </div>
+
         {calendars.length === 0 ? (
-          <div className="text-center py-20 text-neutral-500">
-            <p className="text-5xl mb-4">📅</p>
-            <p className="text-lg mb-2">Nenhum calendário ainda</p>
+          <div className="text-center py-16 text-neutral-500 border border-neutral-800 rounded-xl">
+            <p className="text-4xl mb-4">📅</p>
+            <p className="text-base mb-1 text-neutral-400">Nenhum calendário ainda</p>
             <p className="text-sm mb-6">Gere seu primeiro e o mês de conteúdo estará pronto</p>
-            <Link href="/gerar" className="text-rose-400 hover:underline text-sm">
-              Gerar meu primeiro calendário →
-            </Link>
+            {profiles.length > 0 && (
+              <Link href={generateHref} className="text-rose-400 hover:underline text-sm">
+                Gerar meu primeiro calendário →
+              </Link>
+            )}
           </div>
         ) : agencyMode ? (
-          // Vista agência — agrupado por negócio
           <div className="space-y-6">
             {Array.from(grouped.entries()).map(([businessName, cals]) => (
               <div key={businessName} className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
@@ -156,10 +221,7 @@ export default async function DashboardPage({
                     <p className="font-semibold">{businessName}</p>
                     <p className="text-xs text-neutral-500 mt-0.5">{cals[0].niche} · {cals.length} calendário{cals.length > 1 ? "s" : ""}</p>
                   </div>
-                  <Link
-                    href={`/gerar`}
-                    className="text-xs text-rose-400 hover:underline"
-                  >
+                  <Link href="/gerar" className="text-xs text-rose-400 hover:underline">
                     + Novo mês
                   </Link>
                 </div>
@@ -184,9 +246,8 @@ export default async function DashboardPage({
             ))}
           </div>
         ) : (
-          // Vista lista padrão
           <div className="grid gap-4">
-            {calendars.map((cal) => (
+            {(calendars as CalendarRow[]).map((cal) => (
               <Link
                 key={cal.id}
                 href={`/calendario/${cal.id}`}
