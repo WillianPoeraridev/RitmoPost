@@ -289,9 +289,11 @@ Core loop: gerar → ver → baixar PDF → pagar.
 ### Fase 3 — 90 a 180 Dias
 
 - [ ] ~~Integração Meta Business Suite~~ — **MORTA por decisão estratégica.** Não integramos na conta do cliente: é o nosso diferencial defensivo. Nunca.
-- [x] **Gerador de carrossel (motor)** — arte pronta pra postar via render determinístico (`next/og`/Satori), não difusão. Cor de marca (6 cores, iguais às do PDF) + tema dark/light, custo zero de token. Ver seção "Gerador de Carrossel" abaixo. **Falta pro cliente:** persistir cor/tema no perfil, logo (storage), gate Pro.
+- [x] **Gerador de carrossel (motor)** — arte pronta pra postar via render determinístico (`next/og`/Satori), não difusão. Cor de marca (6 cores, iguais às do PDF) + tema dark/light, custo zero de token. Ver seção "Gerador de Carrossel" abaixo.
+- [x] **Upload de logo (carrossel)** — Cloudflare R2: `PUT/DELETE /api/profiles/[id]/logo`, `LogoUpload` component, logo renderiza na capa e no CTA do carrossel (next/og busca a URL pública). Entregue 2026-06-23.
+- [ ] **Persistir cor/tema no perfil** — hoje escolha por sessão. Coluna nova em `business_profiles` + ler na rota.
+- [ ] **Gate Pro no carrossel** — botão "Gerar carrossel" hoje liberado pra qualquer logado.
 - [ ] White-label para agências
-- [ ] Upload de logo (no PDF e no carrossel — requer S3/R2)
 - [ ] API pública
 
 ---
@@ -316,7 +318,7 @@ Render **determinístico** (`next/og` → Satori → PNG), não difusão. Pesqui
 ### O que falta (pra virar produto pro cliente — Passo 2)
 
 - [ ] **Persistir cor/tema no perfil do negócio** — hoje é escolha por sessão (igual o PDF). Coluna nova em `business_profiles` + ler na rota, pra cada negócio "lembrar" a marca.
-- [ ] **Logo do cliente no slide** — requer storage (Cloudflare R2/S3). É o único bloqueio real; pra uso próprio, logo entraria como asset fixo.
+- [x] **Logo do cliente no slide** — Cloudflare R2 configurado (`ritmopost-logos`, public URL `pub-3231a0c7161d4ee9a0db21af3f784e45.r2.dev`), `aws4fetch` para signing S3-compat, logo renderiza na capa e no CTA via `next/og`. Env vars na Vercel. Entregue 2026-06-23.
 - [ ] **Gate por plano Pro** no botão "Gerar carrossel" (hoje liberado pra qualquer logado — ok pra fase de case próprio).
 - [ ] **Densidade de slides** (opcional): hoje 1 frase da legenda = 1 slide (3–5 no total). Carrossel de 7–10 slides com conteúdo de verdade exigiria **1** chamada de IA por carrossel pra expandir o tema (~R$0,001) — o único ponto que voltaria a custar token.
 - [ ] Capa com imagem de fundo opcional (aí sim difusão via nano-banana no OpenRouter, ~$0,05) — só onde foto agrega.
@@ -452,4 +454,4 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # testar webhooks
 
 ---
 
-*Última atualização: 2026-06-22 — Entregue: **gerador de carrossel** (arte pronta pra postar, render determinístico `next/og`/Satori, cor de marca + tema dark/light, custo zero de token) — ver seção "Gerador de Carrossel". Pendente do carrossel: persistir cor/tema no perfil, logo (storage R2), gate Pro. Banco de usuários de teste zerado nesta sessão. Anterior (2026-06-17): método MoneyBranding (pilar + story diário, QA 10 nichos), landing redesenhada (Direção 4 dark+coral) e tema coral no app inteiro, preço anual → R$269. Pendente pra fechar de casa: (1) ~~DNS~~ ✅; (2) criar Stripe + Price anual R$269; (3) VPS Hetzner do WhatsApp; (4) dia 7 (QA fluxo + Reels demo + 50 leads). Ver "Estado atual" no topo.*
+*Última atualização: 2026-06-23 — Entregue: **logo no R2** (Cloudflare R2 `ritmopost-logos`, upload/delete por perfil, logo na capa e CTA do carrossel via next/og, env vars na Vercel) + **UX do dashboard** (perfil inline no topo — zero cliques pra editar ou gerar; CTA "Criar perfil" para usuário sem perfil; link "Editar perfil" na página do calendário). Deploy em produção (`ritmopost.com.br`). Pendente do carrossel: persistir cor/tema no perfil, gate Pro. Anterior (2026-06-22): gerador de carrossel (render determinístico, cor de marca, dark/light). Pendente geral: (1) criar Stripe + Price anual R$269; (2) VPS Hetzner do WhatsApp; (3) QA fluxo completo + Reels demo + 50 leads.*
