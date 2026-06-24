@@ -7,7 +7,7 @@ const PREVIEW = [
 ];
 
 const ENTRY = [
-  "30 posts. Cada um com um trabalho — atrair, conectar ou converter.",
+  "30 posts. Cada um com um trabalho - atrair, conectar ou converter.",
   "Carrossel e legenda na sua marca.",
   "Tudo de uma vez. Hoje.",
 ];
@@ -50,14 +50,15 @@ export default function LandingPage() {
               Seu feed, não.
             </h1>
             <p className="text-lg text-neutral-400 mt-5 max-w-md leading-relaxed">
-              30 dias de conteúdo na sua marca. Você não escreve nada.
+              30 dias de conteúdo na sua marca.<br />
+              Você não escreve nada.
             </p>
           </div>
 
           <div>
             <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 shadow-2xl shadow-black/40">
-              <div className="mb-4">
-                <span className="text-sm font-medium text-neutral-300">Seu mês</span>
+              <div className="mb-4 px-3">
+                <span className="text-sm font-medium text-neutral-300">Seu mês:</span>
               </div>
               <div className="space-y-2.5">
                 {PREVIEW.map((p) => (
@@ -77,10 +78,9 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between mt-4">
-                <span className="text-xs text-neutral-600">+ 27 dias, cada um com um trabalho.</span>
-                <span className="text-xs text-neutral-600">30 dias com propósito</span>
-              </div>
+              <p className="text-xs text-neutral-600 mt-4 px-3">
+                + 27 dias, cada um com um trabalho. 30 dias com propósito.
+              </p>
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto px-6 py-12 grid lg:grid-cols-2 gap-10 lg:gap-0">
           <div className="lg:pr-14">
             <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-              R$47, uma vez. O mês inteiro na sua mão hoje.
+              R$47 uma vez. O mês inteiro na sua mão hoje.
             </h2>
             <ul className="mt-6 space-y-3">
               {ENTRY.map((item) => (
@@ -111,27 +111,22 @@ export default function LandingPage() {
               Deixa no automático.
             </h2>
             <p className="text-lg text-neutral-400 mt-4 leading-relaxed">
-              Todo mês no WhatsApp. Arte pronta, na sua marca.{" "}
+              Todo mês no WhatsApp.<br />
+              Arte pronta, na sua marca.{" "}
               <span className="text-neutral-100 font-medium">R$297/mês.</span>
             </p>
           </div>
         </div>
       </section>
 
-      {/* PROVA */}
-      <section className="border-t border-neutral-900">
-        <div className="max-w-3xl mx-auto px-6 py-8 md:py-10">
-          <p className="text-xl md:text-2xl font-medium tracking-tight leading-snug text-neutral-200 text-center">
-            O feed que te trouxe até aqui foi feito com Cadência.
-          </p>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
+      {/* CTA FINAL — prova + comando + botão num único bloco */}
       <section className="border-t border-neutral-900">
         <div className="max-w-5xl mx-auto px-6 py-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight md:whitespace-nowrap">
-            O próximo mês começa agora.
+          <p className="text-base text-neutral-500 mb-4">
+            O feed que te trouxe até aqui foi feito com Cadência.
+          </p>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
+            Fecha. Recebe. Posta.
           </h2>
           <Link
             href="/cadastro?next=entry"
