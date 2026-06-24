@@ -111,7 +111,19 @@ O modelo mais importante. Duas escalas independentes.
 
 ---
 
-## 5. Checklist rápido antes de publicar
+## 5. Palavras e padrões proibidos (validados em uso real)
+
+| Proibido | Problema | Alternativa |
+|---|---|---|
+| "Garantir" | Vibe de marketing 2010, red flag pra expert | "Quero", "Receber", verbo direto |
+| "O próximo X começa agora" | Genérico/2019 internet, sem peso | Verbo de comando concreto ("Fecha. Recebe. Posta.") |
+| "Gostou? [comando]" | Pergunta = pede validação = baixo status | Comando direto sem qualificador |
+| Spec técnico em copy ("às 8h", "em 2 min") | Developer thinking; comprador quer resultado, não horário | Resultado + verbo: "O post chega. Você posta." |
+| Emojis em UI/copy premium | Off-brand pra produto dark high-status | Zero emoji — tipografia e cor fazem o trabalho |
+| "Na sua voz" / "pronto pra postar" | Claims commodity que todo concorrente usa | Elevá os que só a Cadência tem (o método, o momento) |
+| Perguntas seguidas de resposta ("Por quê? Porque...") | Explica o óbvio, condescende | Afirma direto |
+
+## 6. Checklist rápido antes de publicar
 
 1. A **manchete** é identificação (espelho) ou promessa amplificada? Ela sozinha vende?
 2. Cortei toda explicação de mecanismo **commodity**?
