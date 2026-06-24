@@ -68,7 +68,7 @@ export default function CadastroPage() {
             Cadência<span className="text-rose-500">.</span>
           </Link>
           <p className="text-neutral-400 mt-2 text-sm">
-            Crie sua conta pra receber seus 30 dias.
+            Quase lá. Seus 30 dias chegam hoje.
           </p>
         </div>
 
@@ -118,7 +118,7 @@ export default function CadastroPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -tranneutral-y-1/2 text-neutral-500 hover:text-neutral-300 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition-colors"
               >
                 {showPassword ? (
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +138,7 @@ export default function CadastroPage() {
             disabled={loading}
             className="w-full bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors py-2.5 rounded-lg font-medium"
           >
-            {loading ? "Criando conta..." : "Criar conta"}
+            {loading ? "Um segundo..." : "Quero meus 30 dias"}
           </button>
         </form>
 

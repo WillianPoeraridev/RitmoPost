@@ -37,13 +37,13 @@ export function WhatsAppSettings({
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <p className="font-semibold flex items-center gap-2">
-            💬 Post do dia no WhatsApp
+            Post do dia no WhatsApp
             <span className="text-xs bg-rose-600/30 border border-rose-600/50 text-rose-300 px-2 py-0.5 rounded-full">
               Pro
             </span>
           </p>
           <p className="text-sm text-neutral-400 mt-1">
-            Todo dia às 8h, o post do dia chega no seu zap com a legenda pronta pra copiar
+            O post chega. Você posta.
           </p>
         </div>
         <div className="flex items-center gap-2">

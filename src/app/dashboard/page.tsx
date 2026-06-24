@@ -117,7 +117,7 @@ export default async function DashboardPage({
             <div>
               <p className="font-semibold text-white text-lg">Crie seu perfil de marca</p>
               <p className="text-sm text-neutral-400 mt-1">
-                Sua voz, sua metodologia, suas ofertas — o conteúdo sai na sua cara todo mês.
+                Sua marca, sua voz, suas ofertas. O conteúdo sai como você.
               </p>
             </div>
             <Link
@@ -202,13 +202,12 @@ export default async function DashboardPage({
         </div>
 
         {calendars.length === 0 ? (
-          <div className="text-center py-16 text-neutral-500 border border-neutral-800 rounded-xl">
-            <p className="text-4xl mb-4">📅</p>
-            <p className="text-base mb-1 text-neutral-400">Nenhum calendário ainda</p>
-            <p className="text-sm mb-6">Gere seu primeiro e o mês de conteúdo estará pronto</p>
+          <div className="text-center py-16 border border-neutral-800 rounded-xl">
+            <p className="text-base font-semibold text-neutral-200 mb-2">Seu mês tá esperando.</p>
+            <p className="text-sm text-neutral-500 mb-6">Gere agora e receba 30 dias prontos.</p>
             {profiles.length > 0 && (
-              <Link href={generateHref} className="text-rose-400 hover:underline text-sm">
-                Gerar meu primeiro calendário →
+              <Link href={generateHref} className="text-rose-400 hover:text-rose-300 transition-colors text-sm font-medium">
+                Gerar meu conteúdo →
               </Link>
             )}
           </div>
