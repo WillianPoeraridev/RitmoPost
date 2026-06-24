@@ -6,9 +6,9 @@ import { PostHogProvider } from "@/components/posthog-provider";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
-  title: "RitmoPost — Calendário de Conteúdo para Instagram com IA",
+  title: "Cadência — sua autoridade, postando todo dia",
   description:
-    "30 dias de conteúdo para seu Instagram em 10 segundos. Gerado por IA, personalizado para seu negócio.",
+    "30 dias de conteúdo on-brand, na sua voz, prontos pra postar. Sua autoridade no automático.",
 };
 
 export default function RootLayout({

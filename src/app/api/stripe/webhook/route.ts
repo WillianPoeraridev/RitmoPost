@@ -25,14 +25,30 @@ export async function POST(req: NextRequest) {
     const userId = session.metadata?.userId;
     if (!userId) return NextResponse.json({ ok: true });
 
-    await db
-      .update(user)
-      .set({
-        plan: "pro",
-        stripeCustomerId: session.customer as string,
-        stripeSubscriptionId: session.subscription as string,
-      })
-      .where(eq(user.id, userId));
+    if (session.mode === "payment") {
+      // Tripwire R$47: libera Pro por ~1 mês (os "30 dias"). Sem assinatura —
+      // quando expira, isProUser volta a false e vira o gancho pro R$297/mês.
+      const expiresAt = new Date(Date.now() + 35 * 24 * 60 * 60 * 1000);
+      await db
+        .update(user)
+        .set({
+          plan: "pro",
+          planExpiresAt: expiresAt,
+          stripeCustomerId: session.customer as string,
+        })
+        .where(eq(user.id, userId));
+    } else {
+      // Assinatura (a máquina): Pro contínuo, sem expiração enquanto ativa.
+      await db
+        .update(user)
+        .set({
+          plan: "pro",
+          planExpiresAt: null,
+          stripeCustomerId: session.customer as string,
+          stripeSubscriptionId: session.subscription as string,
+        })
+        .where(eq(user.id, userId));
+    }
   }
 
   if (

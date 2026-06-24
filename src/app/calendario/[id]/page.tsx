@@ -53,8 +53,8 @@ export default async function CalendarioPage({
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/dashboard" className="text-xl font-bold text-rose-400">
-          RitmoPost
+        <Link href="/dashboard" className="text-xl font-semibold tracking-tight">
+          Cadência<span className="text-rose-500">.</span>
         </Link>
         <div className="flex items-center gap-4">
           {profileId && (

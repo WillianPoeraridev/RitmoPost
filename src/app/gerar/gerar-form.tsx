@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const NICHO_SUGGESTIONS = [
-  "Barbearia", "Salão de Beleza", "Estética", "Personal Trainer",
-  "Lanchonete", "Pizzaria", "Açaí", "Fotografia", "Pet Shop", "Clínica",
-  "SaaS", "Marketing Digital", "Negócios Digitais", "Infoproduto", "Criação de Conteúdo",
+const NICHE_SUGGESTIONS = [
+  "Mentoria de negócios", "Copywriting", "Marketing digital",
+  "Coach de carreira", "Finanças", "Design de interiores",
+  "Arquitetura", "Fotografia", "Saúde e performance", "Tráfego pago",
 ];
 
 const MONTH_NAMES = [
@@ -92,7 +92,7 @@ export function GerarForm({
     }
 
     if (!res.ok) {
-      setError("Erro ao gerar calendário. Tente novamente.");
+      setError("Erro ao gerar o conteúdo. Tente novamente.");
       setLoading(false);
       return;
     }
@@ -116,10 +116,9 @@ export function GerarForm({
 
       {hasProfiles && !manualMode ? (
         <div>
-          <label className="block text-sm text-neutral-400 mb-2">Perfil do negócio</label>
+          <label className="block text-sm text-neutral-400 mb-2">Perfil de marca</label>
           <div className="space-y-2">
             {profiles.map((p) => {
-              const location = [p.neighborhood, p.city].filter(Boolean).join(", ");
               const selected = selectedProfileId === p.id;
               return (
                 <button
@@ -135,9 +134,8 @@ export function GerarForm({
                   <span className="font-medium block">{p.businessName}</span>
                   <span className="text-xs text-neutral-400">
                     {p.niche}
-                    {location ? ` · ${location}` : ""}
                     {p.servicesCount > 0
-                      ? ` · ${p.servicesCount} serviço${p.servicesCount > 1 ? "s" : ""}`
+                      ? ` · ${p.servicesCount} oferta${p.servicesCount > 1 ? "s" : ""}`
                       : ""}
                   </span>
                 </button>
@@ -146,7 +144,7 @@ export function GerarForm({
           </div>
           <div className="flex items-center justify-between mt-2">
             <Link href="/perfil/novo" className="text-xs text-rose-400 hover:underline">
-              + Cadastrar outro negócio
+              + Criar outro perfil
             </Link>
             <button
               type="button"
@@ -174,30 +172,30 @@ export function GerarForm({
                 href="/perfil/novo"
                 className="flex flex-col w-full bg-rose-600/20 border border-rose-500/60 hover:border-rose-400 hover:bg-rose-600/30 transition-colors px-4 py-4 rounded-xl text-left"
               >
-                <span className="font-semibold text-rose-300 text-sm">Criar perfil do negócio →</span>
-                <span className="text-xs text-neutral-400 mt-0.5">Posts saem com seus serviços, preços e bairro. 2 minutos de setup.</span>
+                <span className="font-semibold text-rose-300 text-sm">Criar meu perfil de marca →</span>
+                <span className="text-xs text-neutral-400 mt-0.5">Voz, método, ofertas — o conteúdo sai na sua cara. 2 minutos de setup.</span>
               </Link>
               <button
                 type="button"
                 onClick={() => {}}
                 className="text-xs text-neutral-500 hover:text-neutral-400 transition-colors w-full text-center"
               >
-                ou continuar sem perfil (calendário genérico)
+                ou continuar sem perfil (conteúdo genérico)
               </button>
             </div>
           )}
           <div>
-            <label className="block text-sm text-neutral-400 mb-1">Nicho / Segmento</label>
+            <label className="block text-sm text-neutral-400 mb-1">Área de especialidade</label>
             <input
               type="text"
               required={manualMode}
               value={niche}
               onChange={(e) => setNiche(e.target.value)}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
-              placeholder="Ex: Barbearia, Salão de Beleza, Personal Trainer..."
+              placeholder="Ex: Mentoria de negócios, Coach de carreira..."
             />
             <div className="flex flex-wrap gap-2 mt-2">
-              {NICHO_SUGGESTIONS.map((s) => (
+              {NICHE_SUGGESTIONS.map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -211,47 +209,47 @@ export function GerarForm({
           </div>
 
           <div>
-            <label className="block text-sm text-neutral-400 mb-1">Nome do negócio</label>
+            <label className="block text-sm text-neutral-400 mb-1">Seu nome / marca</label>
             <input
               type="text"
               required={manualMode}
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
-              placeholder="Ex: Barbearia do Zé, Studio Ana..."
+              placeholder="Ex: João Silva | Mentor de Vendas"
             />
           </div>
 
           <div>
             <label className="block text-sm text-neutral-400 mb-1">
-              Cidade / Bairro <span className="text-neutral-600">(opcional)</span>
+              Público-alvo <span className="text-neutral-600">(opcional)</span>
             </label>
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
-              placeholder="Ex: Tramandaí, Bairro Centro..."
+              placeholder="Ex: Empreendedores digitais 28-45 anos"
             />
           </div>
 
           <div>
             <label className="block text-sm text-neutral-400 mb-1">
-              Diferencial do negócio <span className="text-neutral-600">(opcional)</span>
+              Metodologia / diferencial <span className="text-neutral-600">(opcional)</span>
             </label>
             <input
               type="text"
               value={differentials}
               onChange={(e) => setDifferentials(e.target.value)}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition-colors"
-              placeholder="Ex: Atendimento domiciliar, só produtos veganos..."
+              placeholder="Ex: Método dos 3 pilares: Clareza, Consistência, Conversão"
             />
           </div>
         </>
       )}
 
       <div>
-        <label className="block text-sm text-neutral-400 mb-1">Mês do calendário</label>
+        <label className="block text-sm text-neutral-400 mb-1">Mês do conteúdo</label>
         <div className="flex gap-2">
           {monthOptions.map((opt) => (
             <button
@@ -281,16 +279,16 @@ export function GerarForm({
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            A IA está criando seu calendário...
+            Gerando seu conteúdo...
           </span>
         ) : (
-          "Gerar Calendário →"
+          "Gerar conteúdo →"
         )}
       </button>
 
       {loading && (
         <p className="text-center text-neutral-500 text-xs">
-          A IA escreve os 30 dias um a um — leva uns 30 a 40 segundos ✨
+          30 dias com método — leva uns 30 a 40 segundos.
         </p>
       )}
     </form>

@@ -33,6 +33,25 @@ export default function CadastroPage() {
         body: JSON.stringify({ name }),
       }).catch(() => {});
 
+      // Veio do CTA de entrada (R$47)? Manda direto pro checkout em vez do app.
+      const next = new URLSearchParams(window.location.search).get("next");
+      if (next === "entry") {
+        try {
+          const res = await fetch("/api/stripe/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ plan: "entry" }),
+          });
+          const { url } = await res.json();
+          if (url) {
+            window.location.href = url;
+            return;
+          }
+        } catch {
+          // Falhou o checkout: cai no app mesmo assim, sem travar o cadastro.
+        }
+      }
+
       router.push("/gerar");
       router.refresh();
     } catch {
@@ -45,11 +64,11 @@ export default function CadastroPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold text-rose-400">
-            RitmoPost
+          <Link href="/" className="text-2xl font-semibold tracking-tight">
+            Cadência<span className="text-rose-500">.</span>
           </Link>
           <p className="text-neutral-400 mt-2 text-sm">
-            Crie sua conta e gere seu primeiro calendário grátis
+            Crie sua conta pra receber seus 30 dias.
           </p>
         </div>
 
@@ -119,7 +138,7 @@ export default function CadastroPage() {
             disabled={loading}
             className="w-full bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors py-2.5 rounded-lg font-medium"
           >
-            {loading ? "Criando conta..." : "Criar conta grátis"}
+            {loading ? "Criando conta..." : "Criar conta"}
           </button>
         </form>
 

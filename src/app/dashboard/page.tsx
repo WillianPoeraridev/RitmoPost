@@ -90,7 +90,7 @@ export default async function DashboardPage({
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-rose-400">RitmoPost</span>
+        <span className="text-xl font-semibold tracking-tight">Cadência<span className="text-rose-500">.</span></span>
         <div className="flex items-center gap-4">
           {isPro && (
             <span className="text-xs bg-rose-600/30 border border-rose-600/50 text-rose-300 px-2 py-1 rounded-full font-medium">
@@ -111,13 +111,13 @@ export default async function DashboardPage({
           </div>
         )}
 
-        {/* ── Perfil do negócio ── sempre no topo */}
+        {/* ── Perfil de marca ── sempre no topo */}
         {profiles.length === 0 ? (
           <div className="mb-8 rounded-2xl border border-rose-700/40 bg-gradient-to-r from-rose-900/20 to-neutral-900 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-white text-lg">Configure o perfil do seu negócio</p>
+              <p className="font-semibold text-white text-lg">Crie seu perfil de marca</p>
               <p className="text-sm text-neutral-400 mt-1">
-                O calendário sai com seus serviços, preços e tom de voz — mas precisamos conhecer seu negócio primeiro
+                Sua voz, sua metodologia, suas ofertas — o conteúdo sai na sua cara todo mês.
               </p>
             </div>
             <Link
@@ -143,7 +143,7 @@ export default async function DashboardPage({
                 <p className="text-sm text-neutral-400 truncate">
                   {mainProfile?.niche}
                   {mainProfile?.instagramHandle ? ` · ${mainProfile.instagramHandle}` : ""}
-                  {multiProfile ? ` · ${profiles.length} negócios` : ""}
+                  {multiProfile ? ` · ${profiles.length} perfis` : ""}
                 </p>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default async function DashboardPage({
                 href={generateHref}
                 className="text-sm bg-rose-600 hover:bg-rose-500 transition-colors px-4 py-2 rounded-lg font-medium"
               >
-                + Novo calendário
+                + Gerar conteúdo
               </Link>
             </div>
           </div>
@@ -177,9 +177,9 @@ export default async function DashboardPage({
         {!isPro && generationsUsed >= 1 && (
           <div className="bg-rose-900/20 border border-rose-700/50 rounded-xl p-5 mb-8 flex items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-rose-300">Você usou sua geração grátis</p>
+              <p className="font-semibold text-rose-300">Seu mês expirou</p>
               <p className="text-sm text-neutral-400 mt-1">
-                Assine o Pro para gerar calendários ilimitados por R$29,90/mês
+                Deixa no automático — Cadência Pro por R$297/mês.
               </p>
             </div>
             <UpgradeButton />

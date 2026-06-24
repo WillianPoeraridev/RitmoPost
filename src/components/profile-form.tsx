@@ -4,15 +4,17 @@ import { useRouter } from "next/navigation";
 import type { BusinessService, BusinessTone } from "@/lib/schema";
 import { LogoUpload } from "@/components/logo-upload";
 
-const NICHO_SUGGESTIONS = [
-  "Barbearia", "Salão de Beleza", "Estética", "Personal Trainer",
-  "Lanchonete", "Pizzaria", "Açaí", "Fotografia", "Pet Shop", "Clínica",
+const NICHE_SUGGESTIONS = [
+  "Mentoria de negócios", "Copywriting e vendas", "Marketing digital",
+  "Coach de carreira", "Finanças pessoais", "Liderança e gestão",
+  "Design de interiores", "Arquitetura", "Fotografia", "Nutrição e saúde",
+  "Psicologia e desenvolvimento", "Tráfego pago",
 ];
 
 const TONE_OPTIONS: { value: BusinessTone; label: string; hint: string }[] = [
-  { value: "descontraido", label: "Descontraído", hint: "papo de cliente fiel" },
-  { value: "profissional", label: "Profissional", hint: "confiável, sem ser duro" },
-  { value: "premium", label: "Premium", hint: "sofisticado, alto padrão" },
+  { value: "descontraido", label: "Direto e cru", hint: "sem filtro, sem rodeio" },
+  { value: "profissional", label: "Autoridade", hint: "sólido, seguro, experiente" },
+  { value: "premium", label: "Premium", hint: "sofisticado, aspiracional" },
 ];
 
 export type ProfileFormData = {
@@ -45,10 +47,9 @@ export function ProfileForm({
   const [services, setServices] = useState<BusinessService[]>(
     initial?.services?.length ? initial.services : [{ name: "", price: "" }]
   );
-  const [tone, setTone] = useState<BusinessTone>(initial?.tone ?? "descontraido");
+  const [tone, setTone] = useState<BusinessTone>(initial?.tone ?? "profissional");
   const [differentials, setDifferentials] = useState(initial?.differentials ?? "");
   const [city, setCity] = useState(initial?.city ?? "");
-  const [neighborhood, setNeighborhood] = useState(initial?.neighborhood ?? "");
   const [recurringPromos, setRecurringPromos] = useState(initial?.recurringPromos ?? "");
   const [instagramHandle, setInstagramHandle] = useState(initial?.instagramHandle ?? "");
   const [loading, setLoading] = useState(false);
@@ -73,7 +74,7 @@ export function ProfileForm({
       tone,
       differentials,
       city,
-      neighborhood,
+      neighborhood: "",
       recurringPromos: recurringPromos.trim() || null,
       instagramHandle: instagramHandle.trim() || null,
     };
@@ -131,29 +132,29 @@ export function ProfileForm({
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-neutral-400 mb-1">Nome do negócio *</label>
+          <label className="block text-sm text-neutral-400 mb-1">Seu nome / marca *</label>
           <input
             type="text"
             required
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
             className={inputClass}
-            placeholder="Ex: Barbearia do Zé"
+            placeholder="Ex: João Silva | Mentor de Vendas"
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-400 mb-1">Nicho / Segmento *</label>
+          <label className="block text-sm text-neutral-400 mb-1">Área de especialidade *</label>
           <input
             type="text"
             required
-            list="nicho-list"
+            list="niche-list"
             value={niche}
             onChange={(e) => setNiche(e.target.value)}
             className={inputClass}
-            placeholder="Ex: Barbearia"
+            placeholder="Ex: Mentoria de negócios"
           />
-          <datalist id="nicho-list">
-            {NICHO_SUGGESTIONS.map((s) => (
+          <datalist id="niche-list">
+            {NICHE_SUGGESTIONS.map((s) => (
               <option key={s} value={s} />
             ))}
           </datalist>
@@ -162,8 +163,8 @@ export function ProfileForm({
 
       <div>
         <label className="block text-sm text-neutral-400 mb-1">
-          Serviços e preços
-          <span className="text-neutral-600"> — os posts vão citar esses valores</span>
+          Ofertas e programas
+          <span className="text-neutral-600"> — o que você vende e por quanto</span>
         </label>
         <div className="space-y-2">
           {services.map((service, i) => (
@@ -173,21 +174,21 @@ export function ProfileForm({
                 value={service.name}
                 onChange={(e) => setService(i, { name: e.target.value })}
                 className={inputClass}
-                placeholder="Ex: Combo corte + barba"
+                placeholder="Ex: Mentoria 1:1 intensiva"
               />
               <input
                 type="text"
                 value={service.price ?? ""}
                 onChange={(e) => setService(i, { price: e.target.value })}
-                className={`${inputClass} max-w-[120px]`}
-                placeholder="R$50"
+                className={`${inputClass} max-w-[140px]`}
+                placeholder="R$3.000"
               />
               {services.length > 1 && (
                 <button
                   type="button"
                   onClick={() => setServices((prev) => prev.filter((_, j) => j !== i))}
                   className="text-neutral-500 hover:text-red-400 px-2 transition-colors"
-                  aria-label="Remover serviço"
+                  aria-label="Remover oferta"
                 >
                   ✕
                 </button>
@@ -195,13 +196,13 @@ export function ProfileForm({
             </div>
           ))}
         </div>
-        {services.length < 20 && (
+        {services.length < 10 && (
           <button
             type="button"
             onClick={() => setServices((prev) => [...prev, { name: "", price: "" }])}
             className="text-xs text-rose-400 hover:underline mt-2"
           >
-            + Adicionar serviço
+            + Adicionar oferta
           </button>
         )}
       </div>
@@ -230,61 +231,54 @@ export function ProfileForm({
       </div>
 
       <div>
-        <label className="block text-sm text-neutral-400 mb-1">Diferenciais</label>
+        <label className="block text-sm text-neutral-400 mb-1">
+          Metodologia / pilares da sua marca
+        </label>
         <textarea
           value={differentials}
           onChange={(e) => setDifferentials(e.target.value)}
           maxLength={500}
           rows={2}
           className={inputClass}
-          placeholder="Ex: único com horário até 22h, atendimento com hora marcada, cerveja grátis"
+          placeholder="Ex: Meu método tem 3 pilares: Clareza, Consistência, Conversão. Ensino pelo princípio de..."
         />
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-neutral-400 mb-1">Cidade</label>
+          <label className="block text-sm text-neutral-400 mb-1">Público-alvo</label>
           <input
             type="text"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             className={inputClass}
-            placeholder="Ex: Tramandaí"
+            placeholder="Ex: Empreendedores digitais 28-45 anos"
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-400 mb-1">Bairro</label>
-          <input
-            type="text"
-            value={neighborhood}
-            onChange={(e) => setNeighborhood(e.target.value)}
-            className={inputClass}
-            placeholder="Ex: Centro"
-          />
-        </div>
-      </div>
-
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-neutral-400 mb-1">Promoções recorrentes</label>
+          <label className="block text-sm text-neutral-400 mb-1">
+            Tema âncora
+            <span className="text-neutral-600"> — assunto que você sempre volta</span>
+          </label>
           <input
             type="text"
             value={recurringPromos}
             onChange={(e) => setRecurringPromos(e.target.value)}
             className={inputClass}
-            placeholder="Ex: terça 20% off, combo de sexta"
+            placeholder="Ex: liberdade financeira, mentalidade de dono"
           />
         </div>
-        <div>
-          <label className="block text-sm text-neutral-400 mb-1">Instagram</label>
-          <input
-            type="text"
-            value={instagramHandle}
-            onChange={(e) => setInstagramHandle(e.target.value)}
-            className={inputClass}
-            placeholder="@barbeariadoze"
-          />
-        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm text-neutral-400 mb-1">Instagram</label>
+        <input
+          type="text"
+          value={instagramHandle}
+          onChange={(e) => setInstagramHandle(e.target.value)}
+          className={inputClass}
+          placeholder="@seuperfil"
+        />
       </div>
 
       {profileId ? (
@@ -293,7 +287,7 @@ export function ProfileForm({
         </div>
       ) : (
         <p className="text-xs text-neutral-600 border-t border-neutral-800 pt-5">
-          📷 A logo pode ser enviada depois de criar o perfil — ela aparece nos carrosséis.
+          A logo pode ser enviada depois — ela aparece nos carrosséis.
         </p>
       )}
 
