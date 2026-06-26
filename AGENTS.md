@@ -8,6 +8,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 **Antes de escrever qualquer texto voltado pro usuário (landing, e-mail, DM, anúncio, microcopy de UI) ou de propor qualquer ideia de negócio/posicionamento/oferta, leia [`COPYWRITING.md`](COPYWRITING.md) na raiz e aplique.** Não é opcional. Toda decisão de copy passa pelos eixos de Schwartz (awareness × sofisticação) e pela regra-mãe documentada lá.
 
+## Knowledge vault
+
+O vault de conhecimento do projeto (posicionamento, copy, roadmap organizado para leitura) fica em `../vault-cadencia/`. Se precisar sincronizar uma nota do vault após mudança de doc, leia o arquivo alterado aqui e reescreva a nota correspondente lá.
+
 ## O norte do produto (não esqueça nunca)
 
 Cadência **não é** "uma ferramenta que gera posts automáticos". É **a ferramenta que gera os melhores posts do mercado** — com o melhor prompt de venda/copy embutido, na melhor estratégia de entrega e conversão. O moat não é a automação; é a **qualidade da copy e da estratégia** que sai dela. Toda feature, todo prompt de geração, toda decisão de produto deve empurrar nessa direção. Quando houver trade-off entre "mais automático" e "melhor copy", **melhor copy vence**.
